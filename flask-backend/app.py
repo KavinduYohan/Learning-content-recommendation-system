@@ -9,7 +9,7 @@ CORS(app)
 db = mysql.connector.connect(
     host="localhost",
     user="root",  # Replace with your MySQL username
-    password="Kavindu1495?",  # Replace with your MySQL password
+    password="",  # Replace with your MySQL password
     database="learningContent"  # Replace with your MySQL database name
 )
 
