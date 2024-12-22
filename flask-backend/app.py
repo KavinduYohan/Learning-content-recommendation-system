@@ -8,9 +8,9 @@ CORS(app)
 # Connect to MySQL database
 db = mysql.connector.connect(
     host="localhost",
-    user="root",  # Replace with your MySQL username
-    password="",  # Replace with your MySQL password
-    database="learningContent"  # Replace with your MySQL database name
+    user="root", 
+    password="", 
+    database="learningContent"  
 )
 
 cursor = db.cursor()
@@ -47,6 +47,7 @@ def login():
         return jsonify({"message": "Login successful!"})
     else:
         return jsonify({"message": "Invalid username or password."}), 401
+
 
 if __name__ == '__main__':
     app.run(debug=True)
