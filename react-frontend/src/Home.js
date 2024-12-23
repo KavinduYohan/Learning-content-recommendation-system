@@ -1,13 +1,15 @@
-import React from 'react';
-import Navbar from './components/Navbar'; // Adjust the relative path based on your project structure
-import './Home.css'; // Add Home.css for styling
+import React from "react";
+import "./Home.css";
+import Navbar from "./components/Navbar"; // Import Navbar component
 
 function Home() {
   return (
-    <div className="container">
-      <Navbar />
-      <h1>Welcome to the Home Page</h1>
-      <p>You have successfully logged in!</p>
+    <div>
+      <Navbar /> {/* Reusable Navbar Component */}
+      <header className="home-header">
+        <h1>Welcome to the Home Page</h1>
+        <p>You have successfully logged in!</p>
+      </header>
     </div>
   );
 }
