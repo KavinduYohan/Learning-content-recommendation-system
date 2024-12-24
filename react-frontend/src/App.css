@@ -1,8 +1,7 @@
-/* App.css */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(to right, #6a11cb, #2575fc);
+  background: linear-gradient(to right, #34e89e, #0f3443); /* Updated gradient for consistency */
   color: #fff;
   height: 100vh;
   display: flex;
@@ -13,7 +12,7 @@ body {
 .container {
   width: 100%;
   max-width: 400px;
-  background: #fff;
+  background: #fff; /* White box retained for container contrast */
   color: #333;
   padding: 20px;
   border-radius: 10px;
@@ -38,15 +37,15 @@ body {
 
 .container input:focus {
   outline: none;
-  border-color: #6a11cb;
-  box-shadow: 0 0 8px rgba(106, 17, 203, 0.2);
+  border-color: #34e89e; /* Updated focus color for consistency */
+  box-shadow: 0 0 8px rgba(52, 232, 158, 0.2); /* Soft green glow */
 }
 
 .container button {
   width: calc(50% - 10px);
   padding: 12px;
   margin: 10px 5px;
-  background: #6a11cb;
+  background: #34e89e; /* Updated button gradient */
   color: white;
   border: none;
   border-radius: 5px;
@@ -56,7 +55,7 @@ body {
 }
 
 .container button:hover {
-  background: #2575fc;
+  background: #0f3443; /* Darker hover effect for buttons */
 }
 
 .container p {
