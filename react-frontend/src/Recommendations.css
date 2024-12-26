@@ -1,0 +1,78 @@
+.recommendations-container {
+  padding: 20px;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  margin: 0; /* Remove any default margin */
+ 
+  box-sizing: border-box; /* Include padding in width/height calculation */
+  display: flex; /* Flexbox for alignment (if needed) */
+  flex-direction: column; /* Optional, arrange content vertically */
+}
+
+
+.recommendations-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #222;
+}
+
+.recommendations-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Space between items */
+  justify-content: center; /* Center align the grid */
+}
+
+.recommendation-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Card shadow */
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s; /* Smooth hover effects */
+}
+
+.recommendation-card:hover {
+  transform: scale(1.03); /* Slight zoom on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
+
+.recommendation-thumbnail {
+  width: 100%;
+  height: 180px; /* Fixed height for thumbnails */
+  object-fit: cover; /* Ensure thumbnails cover the container */
+}
+
+.recommendation-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.recommendation-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 10px;
+}
+
+.recommendation-description {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+
+.recommendation-link {
+  font-size: 1rem;
+  color: #0073e6;
+  text-decoration: none;
+  font-weight: bold;
+  align-self: flex-start;
+}
+
+.recommendation-link:hover {
+  text-decoration: underline;
+}

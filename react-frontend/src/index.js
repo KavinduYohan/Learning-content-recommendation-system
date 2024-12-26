@@ -6,6 +6,7 @@ import Home from './Home';
 import Profile from './Profile'; // Import Profile component
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import Recommendations from './Recommendations';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,6 +16,7 @@ root.render(
         <Route path="/" element={<App />} />
         <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} /> {/* Add Profile route */}
+        <Route path="/recommendations" element={<Recommendations />} />
       </Routes>
     </Router>
   </React.StrictMode>
