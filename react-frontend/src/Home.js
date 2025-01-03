@@ -42,7 +42,7 @@ function Home() {
         <h2>Contact Us</h2>
         <p>We'd love to hear from you! Reach out for any queries or suggestions.</p>
         <div className="contact-info">
-          <p>Email: <a href="mailto:contact@recommendify.com">contact@recommendify.com</a></p>
+          <p>Email: <a href="mailto:contact@recomcommendify.">contact@recommendify.com</a></p>
           <p>Phone: <a href="tel:+123456789">+123-456-789</a></p>
           <p>Address: 123 Recommendation St., AI City, World</p>
         </div>
