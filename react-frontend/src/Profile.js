@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Profile.css';
-import MultiSelectField from './components/MultiSelectField';// Import the reusable MultiSelectField component
+import MultiSelectField from './components/MultiSelectField'; // Import the reusable MultiSelectField component
 
 function Profile() {
   const [studentDetails, setStudentDetails] = useState({
@@ -93,7 +93,7 @@ function Profile() {
         {/* Left Sidebar */}
         <div className="profile-left">
           <img
-            src={"https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001877.png"}
+            src="https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001877.png"
             alt="Profile"
             className="profile-photo"
           />
@@ -109,68 +109,61 @@ function Profile() {
         <div className="profile-right">
           <h1 className="profile-title">Update Profile</h1>
           <form className="form-container" onSubmit={handleSubmit}>
-            {/* Personal Details Section */}
-            <div className="form-section">
+            <section className="form-section">
               <h3>Personal Details</h3>
-              <div className="form-group">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Enter Name"
-                  value={studentDetails.name}
-                  onChange={(e) => handleInputChange(e, 'name')}
-                />
-                <input
-                  type="number"
-                  name="age"
-                  placeholder="Enter Age"
-                  value={studentDetails.age}
-                  onChange={(e) => handleInputChange(e, 'age')}
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter Email"
-                  value={studentDetails.email}
-                  onChange={(e) => handleInputChange(e, 'email')}
-                />
-                <input
-                  type="text"
-                  name="phone"
-                  placeholder="Enter Phone Number"
-                  value={studentDetails.phone}
-                  onChange={(e) => handleInputChange(e, 'phone')}
-                />
-              </div>
-            </div>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter Name"
+                value={studentDetails.name}
+                onChange={(e) => handleInputChange(e, 'name')}
+              />
+              <input
+                type="number"
+                name="age"
+                placeholder="Enter Age"
+                value={studentDetails.age}
+                onChange={(e) => handleInputChange(e, 'age')}
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter Email"
+                value={studentDetails.email}
+                onChange={(e) => handleInputChange(e, 'email')}
+              />
+              <input
+                type="text"
+                name="phone"
+                placeholder="Enter Phone Number"
+                value={studentDetails.phone}
+                onChange={(e) => handleInputChange(e, 'phone')}
+              />
+            </section>
 
-            {/* Academic Details Section */}
-            <div className="form-section">
+            <section className="form-section">
               <h3>Academic Details</h3>
-              <div className="form-group">
-                <select
-                  value={studentDetails.level}
-                  onChange={(e) => handleSelectChange(e, 'level')}
-                >
-                  <option value="">Select Level</option>
-                  {levels.map((level, index) => (
-                    <option key={index} value={level}>{level}</option>
-                  ))}
-                </select>
-                <select
-                  value={studentDetails.program}
-                  onChange={(e) => handleSelectChange(e, 'program')}
-                >
-                  <option value="">Select Program</option>
-                  {programs.map((program, index) => (
-                    <option key={index} value={program}>{program}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+              <select
+                value={studentDetails.level}
+                onChange={(e) => handleSelectChange(e, 'level')}
+              >
+                <option value="">Select Level</option>
+                {levels.map((level, index) => (
+                  <option key={index} value={level}>{level}</option>
+                ))}
+              </select>
+              <select
+                value={studentDetails.program}
+                onChange={(e) => handleSelectChange(e, 'program')}
+              >
+                <option value="">Select Program</option>
+                {programs.map((program, index) => (
+                  <option key={index} value={program}>{program}</option>
+                ))}
+              </select>
+            </section>
 
-            {/* Preferences Section (using MultiSelectField component) */}
-            <div className="form-section">
+            <section className="form-section">
               <h3>Preferences</h3>
               <MultiSelectField
                 label="Preferred Learning Methods"
@@ -193,27 +186,14 @@ function Profile() {
                 handleCheckboxChange={handleCheckboxChange}
                 fieldName="preferred_languages"
               />
-            </div>
-
-            {/* Challenges Section */}
-<div className="form-section">
-  <h3>Challenges</h3>
-  <div className="form-group">
-    <h4>Challenging Subject Areas</h4>
-    <MultiSelectField
-      label="Select Challenging Subjects"
-      options={challengingSubjects}
-      selectedValues={studentDetails.challenging_subject_areas}
-      handleCheckboxChange={handleCheckboxChange}
-      fieldName="challenging_subject_areas"
-    />
-  </div>
-</div>
-
-
-            {/* Content Platforms Section */}
-            <div className="form-section">
-              <h3>Content Preferences</h3>
+              <MultiSelectField
+                label="Select Challenging Subjects"
+                options={challengingSubjects}
+                selectedValues={studentDetails.challenging_subject_areas}
+                handleCheckboxChange={handleCheckboxChange}
+                fieldName="challenging_subject_areas"
+              />
+              
               <MultiSelectField
                 label="Preferred Content Platforms"
                 options={contentPlatforms}
@@ -228,32 +208,32 @@ function Profile() {
                 handleCheckboxChange={handleCheckboxChange}
                 fieldName="topics_of_interest"
               />
-            </div>
+            </section>
 
-            {/* Goals and Feedback Section */}
-            <div className="form-section">
+            
+
+            <section className="form-section">
               <h3>Goals & Feedback</h3>
-              <div className="form-group">
-                <textarea
-                  placeholder="Future Goals"
-                  value={studentDetails.future_goals}
-                  onChange={(e) => handleInputChange(e, 'future_goals')}
-                />
-                <textarea
-                  placeholder="Challenges"
-                  value={studentDetails.challenges}
-                  onChange={(e) => handleInputChange(e, 'challenges')}
-                />
-                <textarea
-                  placeholder="Suggestions"
-                  value={studentDetails.suggestions}
-                  onChange={(e) => handleInputChange(e, 'suggestions')}
-                />
-              </div>
-            </div>
+              <textarea
+                placeholder="Future Goals"
+                value={studentDetails.future_goals}
+                onChange={(e) => handleInputChange(e, 'future_goals')}
+              />
+              <textarea
+                placeholder="Challenges"
+                value={studentDetails.challenges}
+                onChange={(e) => handleInputChange(e, 'challenges')}
+              />
+              <textarea
+                placeholder="Suggestions"
+                value={studentDetails.suggestions}
+                onChange={(e) => handleInputChange(e, 'suggestions')}
+              />
+            </section>
 
-            <button type="submit" className="save-button">Save</button>
+            
           </form>
+          <button type="submit" className="save-button">Save</button>
         </div>
 
         {/* Right Sidebar */}
