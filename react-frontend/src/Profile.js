@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Profile.css';
 import MultiSelectField from './components/MultiSelectField'; // Import the reusable MultiSelectField component
+import Navbar from "./components/Navbar";
 
 function Profile() {
   const [studentDetails, setStudentDetails] = useState({
@@ -52,6 +53,34 @@ function Profile() {
     'Data Science',
     'Cybersecurity',
   ];
+  const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
+
+  const subjects = [
+    'intro_to_computer_systems',
+    'programming_fundamentals',
+    'data_structures_algorithms',
+    'operating_systems',
+    'database_systems',
+    'object_oriented_programming',
+    'advanced_software_engineering',
+    'artificial_intelligence',
+    'network_security',
+    'basic_electronics',
+    'circuit_analysis',
+    'microprocessor_systems',
+    'digital_electronics',
+    'embedded_systems_design',
+    'power_electronics',
+    'foundations_industrial_management',
+    'operations_management',
+    'strategic_management',
+    'linear_algebra',
+    'numerical_methods',
+    'optimization_techniques',
+    'probability_statistics',
+    'statistical_inference',
+    'time_series_analysis',
+  ];
 
   const handleCheckboxChange = (e, field) => {
     const { value, checked } = e.target;
@@ -78,16 +107,11 @@ function Profile() {
     console.log('Form Submitted:', studentDetails);
   };
 
+  
   return (
     <div className="profile-wrapper">
-      <nav className="navbar">
-        <h1 className="navbar-logo">MyApp</h1>
-        <ul className="navbar-links">
-          <li><Link to="/home">Home</Link></li>
-          <li><Link to="/profile">Profile</Link></li>
-          <li><a href="/">Logout</a></li>
-        </ul>
-      </nav>
+      <Navbar />
+    
 
       <div className="profile-container">
         {/* Left Sidebar */}
@@ -236,15 +260,35 @@ function Profile() {
           <button type="submit" className="save-button">Save</button>
         </div>
 
-        {/* Right Sidebar */}
-        <div className="profile-extra">
+      <section className="grades-section">
+  <h3>Module Grades</h3>
+  {subjects.map((subject, index) => (
+    <div key={index} className="grade-selector">
+      <label>{subject.replace(/_/g, ' ').toUpperCase()}</label>
+      <select
+        value={studentDetails[subject] || ''}
+        onChange={(e) => handleInputChange(e, subject)}
+      >
+        <option value="">Select Grade</option>
+        {grades.map((grade) => (
+          <option key={grade} value={grade}>
+            {grade}
+          </option>
+        ))}
+      </select>
+    </div>
+  ))}
+</section>;
+
+      </div>
+      {/* Right Sidebar */}
+      <div className="profile-extra">
           <h2>Resources & Links</h2>
           <p>Explore recommended materials for your selected topics of interest!</p>
           <Link to="/recommendations">
             <button className="get-recommendations-button">Get Recommendations</button>
           </Link>
         </div>
-      </div>
     </div>
   );
 }

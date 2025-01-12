@@ -4,7 +4,6 @@ body, html {
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;
   color: #333;
@@ -12,66 +11,32 @@ body, html {
 
 .profile-wrapper {
   display: flex;
+  height: auto;
   flex-direction: column;
-  height: 100%;
-  margin-top: 1100px;
-}
-
-.navbar {
-  background-color: #4CAF50;
-  padding: 15px 20px;
-  color: white;
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-logo {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.navbar-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-}
-
-.navbar-links li {
-  margin-left: 20px;
-}
-
-.navbar-links a {
-  color: white;
-  text-decoration: none;
-  font-size: 16px;
-}
-
-.navbar-links a:hover {
-  text-decoration: underline;
+  min-height: auto; /* Adjusted to fit content */
+  padding: 10px 50px 50px; /* Reduced padding */
 }
 
 .profile-container {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr; /* Three columns: Sidebar, Form, Extra space */
-  gap: 30px;
-  margin: 20px auto;
-  max-width: 1200px;
+  grid-template-columns: 1fr 2fr 1fr; /* Three columns */
+  gap: 20px;
+  max-width: 1500px;
   background-color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  overflow: hidden;
   padding: 20px;
+  margin-top: 40px; /* Reduced margin */
+  transition: all 0.3s ease; /* Smooth transition for responsiveness */
 }
 
-/* Profile Left */
+/* Left Column: Profile Photo and Basic Details */
 .profile-left {
-  text-align: center;
   background-color: #f0f0f0;
   padding: 20px;
   border-radius: 10px;
+  text-align: center;
 }
 
 .profile-photo {
@@ -94,30 +59,17 @@ body, html {
   color: #666;
 }
 
-/* Profile Right */
+/* Center Column: Form Fields */
 .profile-right {
-  grid-column: span 2;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.profile-title {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  grid-column: span 1;
 }
 
 .form-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Creates two equal columns */
-  gap: 40px;
-  margin-top: 20px;
-
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 20px;
 }
 
-
-/* Form Inputs */
 .form-container input,
 .form-container select,
 .form-container textarea {
@@ -126,8 +78,6 @@ body, html {
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 16px;
-  background-color: #fff;
-  
 }
 
 textarea {
@@ -135,78 +85,122 @@ textarea {
   resize: vertical;
 }
 
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 /* Save Button */
-.save-button,
-.get-recommendations-button {
+.save-button {
   width: 100%;
-  padding: 12px 20px;
+  padding: 12px;
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
-  cursor: pointer;
   margin-top: 20px;
-  transition: background-color 0.3s;
 }
 
 .save-button:hover {
   background-color: #45a049;
 }
 
-.get-recommendations-button {
-  background-color: #008CBA;
+/* Right Column: Grade Selector */
+.grades-section {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.get-recommendations-button:hover {
-  background-color: #007bb5;
+.grades-section h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-/* Responsive Layout */
-@media (max-width: 768px) {
-  .profile-container {
-    grid-template-columns: 1fr; /* Stack the columns on small screens */
-  }
+.grade-selector {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
-  .profile-left {
-    max-width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #ddd;
-  }
+.grade-selector label {
+  flex: 1;
+  text-transform: capitalize;
+}
 
-  .profile-right {
-    grid-column: span 1;
-  }
-
-  .profile-extra {
-    grid-column: span 1;
-    margin-top: 20px;
-  }
+.grade-selector select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
 /* Extra Section */
 .profile-extra {
-  display: flex;
-  flex-direction: column;
-  background-color: #f0f0f0;
+  background-color: #f9f9f9;
   padding: 20px;
   border-radius: 10px;
+  text-align: center;
 }
 
-.profile-extra h2 {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 10px;
+/* Responsive Layout for Tablets and Smaller Screens */
+@media (max-width: 1024px) {
+  .profile-container {
+    grid-template-columns: 1fr 2fr; /* Two columns */
+    gap: 15px;
+  }
+
+  .grades-section {
+    grid-column: span 2; /* Expand grades section across two columns */
+  }
 }
 
-.profile-extra p {
-  font-size: 16px;
-  margin-bottom: 15px;
+@media (max-width: 768px) {
+  .profile-container {
+    grid-template-columns: 1fr; /* Stack all sections */
+    padding: 15px;
+    margin-top: 50px;
+  }
+
+  .profile-left,
+  .profile-right,
+  .grades-section {
+    grid-column: span 1;
+    padding: 15px;
+  }
+
+  .grade-selector {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .grade-selector select {
+    width: 100%;
+  }
+}
+
+/* Responsive Layout for Mobile Devices */
+@media (max-width: 480px) {
+  .profile-container {
+    gap: 10px;
+  }
+
+  .profile-left,
+  .profile-right,
+  .grades-section {
+    padding: 10px;
+  }
+
+  .profile-photo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .form-container {
+    grid-template-columns: 1fr; /* Single column for form */
+  }
+
+  .save-button {
+    padding: 10px;
+    font-size: 14px;
+  }
 }
