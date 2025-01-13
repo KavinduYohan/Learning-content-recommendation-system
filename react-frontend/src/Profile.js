@@ -6,10 +6,10 @@ import Navbar from "./components/Navbar";
 
 function Profile() {
   const [studentDetails, setStudentDetails] = useState({
-    name: '',
-    age: '',
-    email: '',
-    phone: '',
+    user_id: '',
+    student_number: '',
+    first_name: '',
+    last_name: '',
     level: '',
     program: '',
     preferred_learning_methods: [],
@@ -23,7 +23,10 @@ function Profile() {
     suggestions: '',
   });
 
-  const levels = ['Level 1', 'Level 2', 'Level 3', 'Level 4'];
+  const [isSubmitting, setIsSubmitting] = useState(false); // Manage form submission state
+  const [message, setMessage] = useState(''); // Manage feedback message
+
+  const levels = [1, 2, 3, 4];
   const programs = [
     'B.Sc. (General) Degree',
     'B.Sc. (Joint Major) Degree',
@@ -53,34 +56,34 @@ function Profile() {
     'Data Science',
     'Cybersecurity',
   ];
-  const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
+  // const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
 
-  const subjects = [
-    'intro_to_computer_systems',
-    'programming_fundamentals',
-    'data_structures_algorithms',
-    'operating_systems',
-    'database_systems',
-    'object_oriented_programming',
-    'advanced_software_engineering',
-    'artificial_intelligence',
-    'network_security',
-    'basic_electronics',
-    'circuit_analysis',
-    'microprocessor_systems',
-    'digital_electronics',
-    'embedded_systems_design',
-    'power_electronics',
-    'foundations_industrial_management',
-    'operations_management',
-    'strategic_management',
-    'linear_algebra',
-    'numerical_methods',
-    'optimization_techniques',
-    'probability_statistics',
-    'statistical_inference',
-    'time_series_analysis',
-  ];
+  // const subjects = [
+  //   'intro_to_computer_systems',
+  //   'programming_fundamentals',
+  //   'data_structures_algorithms',
+  //   'operating_systems',
+  //   'database_systems',
+  //   'object_oriented_programming',
+  //   'advanced_software_engineering',
+  //   'artificial_intelligence',
+  //   'network_security',
+  //   'basic_electronics',
+  //   'circuit_analysis',
+  //   'microprocessor_systems',
+  //   'digital_electronics',
+  //   'embedded_systems_design',
+  //   'power_electronics',
+  //   'foundations_industrial_management',
+  //   'operations_management',
+  //   'strategic_management',
+  //   'linear_algebra',
+  //   'numerical_methods',
+  //   'optimization_techniques',
+  //   'probability_statistics',
+  //   'statistical_inference',
+  //   'time_series_analysis',
+  // ];
 
   const handleCheckboxChange = (e, field) => {
     const { value, checked } = e.target;
@@ -102,17 +105,37 @@ function Profile() {
     setStudentDetails((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  // Form submission handler
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Submitted:', studentDetails);
+    setIsSubmitting(true);
+    setMessage('Submitting your data...');
+
+    try {
+      const response = await fetch('http://localhost:5000/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(studentDetails),
+      });
+
+      if (response.ok) {
+        setMessage('Form submitted successfully!');
+      } else {
+        setMessage('There was an error submitting the form.');
+      }
+    } catch (error) {
+      setMessage('An error occurred while submitting the form.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  
   return (
     <div className="profile-wrapper">
       <Navbar />
     
-
       <div className="profile-container">
         {/* Left Sidebar */}
         <div className="profile-left">
@@ -137,31 +160,31 @@ function Profile() {
               <h3>Personal Details</h3>
               <input
                 type="text"
-                name="name"
-                placeholder="Enter Name"
-                value={studentDetails.name}
-                onChange={(e) => handleInputChange(e, 'name')}
+                name="user_id"
+                placeholder="Enter User ID"
+                value={studentDetails.user_id}
+                onChange={(e) => handleInputChange(e, 'user_id')}
               />
-              <input
-                type="number"
-                name="age"
-                placeholder="Enter Age"
-                value={studentDetails.age}
-                onChange={(e) => handleInputChange(e, 'age')}
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter Email"
-                value={studentDetails.email}
-                onChange={(e) => handleInputChange(e, 'email')}
+               <input
+                type="text"
+                name="student_number"
+                placeholder="Enter Student Number"
+                value={studentDetails.student_number}
+                onChange={(e) => handleInputChange(e, 'student_number')}
               />
               <input
                 type="text"
-                name="phone"
-                placeholder="Enter Phone Number"
-                value={studentDetails.phone}
-                onChange={(e) => handleInputChange(e, 'phone')}
+                name="first_name"
+                placeholder="Enter First Name"
+                value={studentDetails.first_name}
+                onChange={(e) => handleInputChange(e, 'first_name')}
+              />
+              <input
+                type="text"
+                name="last_name"
+                placeholder="Enter Last Name"
+                value={studentDetails.last_name}
+                onChange={(e) => handleInputChange(e, 'last_name')}
               />
             </section>
 
@@ -217,7 +240,6 @@ function Profile() {
                 handleCheckboxChange={handleCheckboxChange}
                 fieldName="challenging_subject_areas"
               />
-              
               <MultiSelectField
                 label="Preferred Content Platforms"
                 options={contentPlatforms}
@@ -233,8 +255,6 @@ function Profile() {
                 fieldName="topics_of_interest"
               />
             </section>
-
-            
 
             <section className="form-section">
               <h3>Goals & Feedback</h3>
@@ -255,40 +275,43 @@ function Profile() {
               />
             </section>
 
-            
+            {/* Grades Section */}
+            {/* <section className="grades-section">
+              <h3>Module Grades</h3>
+              {subjects.map((subject, index) => (
+                <div key={index} className="grade-selector">
+                  <label>{subject.replace(/_/g, ' ').toUpperCase()}</label>
+                  <select
+                    value={studentDetails[subject] || ''}
+                    onChange={(e) => handleInputChange(e, subject)}
+                  >
+                    <option value="">Select Grade</option>
+                    {grades.map((grade) => (
+                      <option key={grade} value={grade}>
+                        {grade}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </section> */}
+
+            <button type="submit" className="save-button" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Save'}
+            </button>
           </form>
-          <button type="submit" className="save-button">Save</button>
+          {message && <p className="submission-message">{message}</p>}
         </div>
 
-      <section className="grades-section">
-  <h3>Module Grades</h3>
-  {subjects.map((subject, index) => (
-    <div key={index} className="grade-selector">
-      <label>{subject.replace(/_/g, ' ').toUpperCase()}</label>
-      <select
-        value={studentDetails[subject] || ''}
-        onChange={(e) => handleInputChange(e, subject)}
-      >
-        <option value="">Select Grade</option>
-        {grades.map((grade) => (
-          <option key={grade} value={grade}>
-            {grade}
-          </option>
-        ))}
-      </select>
-    </div>
-  ))}
-</section>;
-
-      </div>
-      {/* Right Sidebar */}
-      <div className="profile-extra">
+        {/* Right Sidebar */}
+        <div className="profile-extra">
           <h2>Resources & Links</h2>
           <p>Explore recommended materials for your selected topics of interest!</p>
           <Link to="/recommendations">
             <button className="get-recommendations-button">Get Recommendations</button>
           </Link>
         </div>
+      </div>
     </div>
   );
 }
