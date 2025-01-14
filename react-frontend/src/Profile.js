@@ -56,45 +56,24 @@ function Profile() {
     'Data Science',
     'Cybersecurity',
   ];
-  // const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
 
-  // const subjects = [
-  //   'intro_to_computer_systems',
-  //   'programming_fundamentals',
-  //   'data_structures_algorithms',
-  //   'operating_systems',
-  //   'database_systems',
-  //   'object_oriented_programming',
-  //   'advanced_software_engineering',
-  //   'artificial_intelligence',
-  //   'network_security',
-  //   'basic_electronics',
-  //   'circuit_analysis',
-  //   'microprocessor_systems',
-  //   'digital_electronics',
-  //   'embedded_systems_design',
-  //   'power_electronics',
-  //   'foundations_industrial_management',
-  //   'operations_management',
-  //   'strategic_management',
-  //   'linear_algebra',
-  //   'numerical_methods',
-  //   'optimization_techniques',
-  //   'probability_statistics',
-  //   'statistical_inference',
-  //   'time_series_analysis',
-  // ];
+const handleCheckboxChange = (e, field) => {
+  // Ensure e.target exists and has the correct properties
+  if (!e.target) return;
 
-  const handleCheckboxChange = (e, field) => {
-    const { value, checked } = e.target;
+  const { value, checked } = e.target;
+  
+  if (value !== undefined) {
     setStudentDetails((prev) => {
       const newSelections = checked
         ? [...prev[field], value]
         : prev[field].filter((item) => item !== value);
       return { ...prev, [field]: newSelections };
     });
-  };
+  }
+};
 
+  
   const handleSelectChange = (e, field) => {
     const { value } = e.target;
     setStudentDetails((prev) => ({ ...prev, [field]: value }));
@@ -108,6 +87,7 @@ function Profile() {
   // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(studentDetails);
     setIsSubmitting(true);
     setMessage('Submitting your data...');
 
@@ -145,10 +125,9 @@ function Profile() {
             className="profile-photo"
           />
           <div className="basic-details">
-            <h2>{studentDetails.name}</h2>
-            <p>Age: {studentDetails.age}</p>
+            <h2>{studentDetails.first_name} {studentDetails.last_name}</h2>
+            <p>Student Number: {studentDetails.student_number}</p>
             <p>Email: {studentDetails.email}</p>
-            <p>Phone: {studentDetails.phone}</p>
           </div>
         </div>
 
@@ -274,27 +253,6 @@ function Profile() {
                 onChange={(e) => handleInputChange(e, 'suggestions')}
               />
             </section>
-
-            {/* Grades Section */}
-            {/* <section className="grades-section">
-              <h3>Module Grades</h3>
-              {subjects.map((subject, index) => (
-                <div key={index} className="grade-selector">
-                  <label>{subject.replace(/_/g, ' ').toUpperCase()}</label>
-                  <select
-                    value={studentDetails[subject] || ''}
-                    onChange={(e) => handleInputChange(e, subject)}
-                  >
-                    <option value="">Select Grade</option>
-                    {grades.map((grade) => (
-                      <option key={grade} value={grade}>
-                        {grade}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ))}
-            </section> */}
 
             <button type="submit" className="save-button" disabled={isSubmitting}>
               {isSubmitting ? 'Submitting...' : 'Save'}

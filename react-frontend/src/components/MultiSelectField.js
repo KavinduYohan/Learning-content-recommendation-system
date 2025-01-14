@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 const MultiSelectField = ({ label, options, selectedValues, handleCheckboxChange, fieldName }) => {
-  const [selectedOptions, setSelectedOptions] = useState(selectedValues);
+  const [selectedOptions, setSelectedOptions] = useState(selectedValues || []); // Ensure it's not undefined
 
   const handleChange = (selectedOptions) => {
-    // Update the selected options state
     const newSelectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
     setSelectedOptions(newSelectedValues);
 

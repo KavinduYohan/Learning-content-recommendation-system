@@ -10,7 +10,7 @@ db = mysql.connector.connect(
     host="localhost",
     user="root", 
     password="Kavindu1495?", 
-    database="learningContent2"  
+    database="learningContent"  
 )
 
 cursor = db.cursor()
@@ -25,7 +25,7 @@ def signup():
     password = data['password']
     try:
         cursor = db.cursor()  # Create a cursor for the current request
-        cursor.execute("INSERT INTO users2 (username, password) VALUES (%s, %s)", (username, password))
+        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
         db.commit()
         return jsonify({"message": "User signed up successfully!"})
     except mysql.connector.IntegrityError as e:
@@ -41,7 +41,7 @@ def login():
     data = request.json
     username = data['username']
     password = data['password']
-    cursor.execute("SELECT * FROM users2 WHERE username = %s AND password = %s", (username, password))
+    cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
     user = cursor.fetchone()
     if user:
         return jsonify({"message": "Login successful!"})
@@ -52,51 +52,54 @@ def login():
 def submit_form():
     data = request.json
     try:
-        cursor = db.cursor()  # Create a cursor for the current request
+        with db.cursor() as cursor:  # Automatically closes the cursor
 
-        # Extract form data
-        user_id = data.get('user_id')  # Relates to the user table
-        student_number = data.get('student_number')
-        first_name = data.get('first_name')
-        last_name = data.get('last_name')
-        level = data.get('level')
-        program = data.get('program')
-        preferred_learning_method = ','.join(data.get('preferred_learning_method', [])) if isinstance(data.get('preferred_learning_method'), list) else data.get('preferred_learning_method')
-        preferred_study_time = ','.join(data.get('preferred_study_time', [])) if isinstance(data.get('preferred_study_time'), list) else data.get('preferred_study_time')
-        preferred_language = ','.join(data.get('preferred_language', [])) if isinstance(data.get('preferred_language'), list) else data.get('preferred_language')
-        challenging_subject_areas = ','.join(data.get('challenging_subject_areas', [])) if isinstance(data.get('challenging_subject_areas'), list) else data.get('challenging_subject_areas')
-        preferred_content_platforms = ','.join(data.get('preferred_content_platforms', [])) if isinstance(data.get('preferred_content_platforms'), list) else data.get('preferred_content_platforms')
-        topics_of_interest = ','.join(data.get('topics_of_interest', [])) if isinstance(data.get('topics_of_interest'), list) else data.get('topics_of_interest')
-        future_goals = data.get('future_goals')
-        challenges = data.get('challenges')
-        suggestions = data.get('suggestions')
+            # Extract form data
+            user_id = data.get('user_id')
+            student_number = data.get('student_number')
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            level = data.get('level')
+            program = data.get('program')
+            preferred_learning_methods = ','.join(data.get('preferred_learning_methods', [])) or None
+            preferred_study_times = ','.join(data.get('preferred_study_times', [])) or None
+            preferred_languages = ','.join(data.get('preferred_languages', [])) or None
+            challenging_subject_areas = ','.join(data.get('challenging_subject_areas', [])) or None
+            preferred_content_platforms = ','.join(data.get('preferred_content_platforms', [])) or None
+            topics_of_interest = ','.join(data.get('topics_of_interest', [])) or None
+            future_goals = data.get('future_goals')
+            challenges = data.get('challenges')
+            suggestions = data.get('suggestions')
 
-        # Validate required fields
-        if not (user_id and student_number and first_name and last_name and level and program):
-            return jsonify({"message": "Missing required fields"}), 400
+            # Validate required fields
+            if not (user_id and student_number and first_name and last_name and level and program):
+                return jsonify({"message": "Missing required fields"}), 400
 
-        # Insert data into the database
-        cursor.execute("""
-            INSERT INTO students2 (
-                user_id, student_number, first_name, last_name, level, program,
-                preferred_learning_method, preferred_study_time, preferred_language,
-                challenging_subject_areas, preferred_content_platforms,
-                topics_of_interest, future_goals, challenges, suggestions
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (user_id, student_number, first_name, last_name, level, program,
-              preferred_learning_method, preferred_study_time, preferred_language,
-              challenging_subject_areas, preferred_content_platforms,
-              topics_of_interest, future_goals, challenges, suggestions))
+            # Insert data into the database
+            cursor.execute(""" 
+                INSERT INTO students (
+                    user_id, student_number, first_name, last_name, level, program,
+                    preferred_learning_method, preferred_study_time, preferred_language,
+                    challenging_subject_areas, preferred_content_platforms,
+                    topics_of_interest, future_goals, challenges, suggestions
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (user_id, student_number, first_name, last_name, level, program,
+                  preferred_learning_methods, preferred_study_times, preferred_languages,
+                  challenging_subject_areas, preferred_content_platforms,
+                  topics_of_interest, future_goals, challenges, suggestions))
 
-        db.commit()
-        cursor.close()  # Close the cursor after use
-
-        return jsonify({"message": "Form submitted successfully!"}), 201
+            db.commit()
 
     except Exception as e:
-        # Print and return the error for debugging
-        print(f"Error: {e}")
-        return jsonify({"message": f"An error occurred: {e}"}), 500
+        import traceback
+        print("Error:", traceback.format_exc())
+        return jsonify({"message": "An internal error occurred. Please try again later."}), 500
+
+    return jsonify({"message": "Form submitted successfully!"}), 201
+
+
+
+
 
 
 
