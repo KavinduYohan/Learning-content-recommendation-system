@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Profile.css';
-import MultiSelectField from './components/MultiSelectField'; // Import the reusable MultiSelectField component
+// import MultiSelectField from './components/MultiSelectField'; // Import the reusable MultiSelectField component
 import Navbar from "./components/Navbar";
+import Select from 'react-select'; // Import react-select
 
 function Profile() {
   const [studentDetails, setStudentDetails] = useState({
@@ -57,25 +58,14 @@ function Profile() {
     'Cybersecurity',
   ];
 
-const handleCheckboxChange = (e, field) => {
-  // Ensure e.target exists and has the correct properties
-  if (!e.target) return;
+  // Handle multi-select inputs
+  const handleMultiSelectChange = (selectedOptions, field) => {
+    const values = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    setStudentDetails((prev) => ({ ...prev, [field]: values }));
+  };
 
-  const { value, checked } = e.target;
-  
-  if (value !== undefined) {
-    setStudentDetails((prev) => {
-      const newSelections = checked
-        ? [...prev[field], value]
-        : prev[field].filter((item) => item !== value);
-      return { ...prev, [field]: newSelections };
-    });
-  }
-};
-
-  
-  const handleSelectChange = (e, field) => {
-    const { value } = e.target;
+  // Handle single-select inputs
+  const handleSelectChange = (value, field) => {
     setStudentDetails((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -117,7 +107,6 @@ const handleCheckboxChange = (e, field) => {
       <Navbar />
     
       <div className="profile-container">
-        {/* Left Sidebar */}
         <div className="profile-left">
           <img
             src="https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001877.png"
@@ -131,7 +120,6 @@ const handleCheckboxChange = (e, field) => {
           </div>
         </div>
 
-        {/* Center Column (Form) */}
         <div className="profile-right">
           <h1 className="profile-title">Update Profile</h1>
           <form className="form-container" onSubmit={handleSubmit}>
@@ -171,7 +159,7 @@ const handleCheckboxChange = (e, field) => {
               <h3>Academic Details</h3>
               <select
                 value={studentDetails.level}
-                onChange={(e) => handleSelectChange(e, 'level')}
+                onChange={(e) => handleSelectChange(e.target.value, 'level')}
               >
                 <option value="">Select Level</option>
                 {levels.map((level, index) => (
@@ -180,7 +168,7 @@ const handleCheckboxChange = (e, field) => {
               </select>
               <select
                 value={studentDetails.program}
-                onChange={(e) => handleSelectChange(e, 'program')}
+                onChange={(e) => handleSelectChange(e.target.value, 'program')}
               >
                 <option value="">Select Program</option>
                 {programs.map((program, index) => (
@@ -191,47 +179,47 @@ const handleCheckboxChange = (e, field) => {
 
             <section className="form-section">
               <h3>Preferences</h3>
-              <MultiSelectField
-                label="Preferred Learning Methods"
-                options={learningMethods}
-                selectedValues={studentDetails.preferred_learning_methods}
-                handleCheckboxChange={handleCheckboxChange}
-                fieldName="preferred_learning_methods"
+              <Select
+                isMulti
+                name="preferred_learning_methods"
+                options={learningMethods.map((method) => ({ value: method, label: method }))}
+                value={studentDetails.preferred_learning_methods.map((method) => ({ value: method, label: method }))}
+                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_learning_methods')}
               />
-              <MultiSelectField
-                label="Preferred Study Times"
-                options={studyTimes}
-                selectedValues={studentDetails.preferred_study_times}
-                handleCheckboxChange={handleCheckboxChange}
-                fieldName="preferred_study_times"
+              <Select
+                isMulti
+                name="preferred_study_times"
+                options={studyTimes.map((time) => ({ value: time, label: time }))}
+                value={studentDetails.preferred_study_times.map((time) => ({ value: time, label: time }))}
+                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_study_times')}
               />
-              <MultiSelectField
-                label="Preferred Languages"
-                options={languages}
-                selectedValues={studentDetails.preferred_languages}
-                handleCheckboxChange={handleCheckboxChange}
-                fieldName="preferred_languages"
+              <Select
+                isMulti
+                name="preferred_languages"
+                options={languages.map((language) => ({ value: language, label: language }))}
+                value={studentDetails.preferred_languages.map((language) => ({ value: language, label: language }))}
+                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_languages')}
               />
-              <MultiSelectField
-                label="Select Challenging Subjects"
-                options={challengingSubjects}
-                selectedValues={studentDetails.challenging_subject_areas}
-                handleCheckboxChange={handleCheckboxChange}
-                fieldName="challenging_subject_areas"
+              <Select
+                isMulti
+                name="challenging_subject_areas"
+                options={challengingSubjects.map((subject) => ({ value: subject, label: subject }))}
+                value={studentDetails.challenging_subject_areas.map((subject) => ({ value: subject, label: subject }))}
+                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'challenging_subject_areas')}
               />
-              <MultiSelectField
-                label="Preferred Content Platforms"
-                options={contentPlatforms}
-                selectedValues={studentDetails.preferred_content_platforms}
-                handleCheckboxChange={handleCheckboxChange}
-                fieldName="preferred_content_platforms"
+              <Select
+                isMulti
+                name="preferred_content_platforms"
+                options={contentPlatforms.map((platform) => ({ value: platform, label: platform }))}
+                value={studentDetails.preferred_content_platforms.map((platform) => ({ value: platform, label: platform }))}
+                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_content_platforms')}
               />
-              <MultiSelectField
-                label="Topics of Interest"
-                options={topicsOfInterest}
-                selectedValues={studentDetails.topics_of_interest}
-                handleCheckboxChange={handleCheckboxChange}
-                fieldName="topics_of_interest"
+              <Select
+                isMulti
+                name="topics_of_interest"
+                options={topicsOfInterest.map((topic) => ({ value: topic, label: topic }))}
+                value={studentDetails.topics_of_interest.map((topic) => ({ value: topic, label: topic }))}
+                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'topics_of_interest')}
               />
             </section>
 
@@ -261,7 +249,6 @@ const handleCheckboxChange = (e, field) => {
           {message && <p className="submission-message">{message}</p>}
         </div>
 
-        {/* Right Sidebar */}
         <div className="profile-extra">
           <h2>Resources & Links</h2>
           <p>Explore recommended materials for your selected topics of interest!</p>
