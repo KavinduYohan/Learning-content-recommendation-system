@@ -180,47 +180,54 @@ function Profile() {
             <section className="form-section">
               <h3>Preferences</h3>
               <Select
-                isMulti
-                name="preferred_learning_methods"
-                options={learningMethods.map((method) => ({ value: method, label: method }))}
-                value={studentDetails.preferred_learning_methods.map((method) => ({ value: method, label: method }))}
-                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_learning_methods')}
-              />
-              <Select
-                isMulti
-                name="preferred_study_times"
-                options={studyTimes.map((time) => ({ value: time, label: time }))}
-                value={studentDetails.preferred_study_times.map((time) => ({ value: time, label: time }))}
-                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_study_times')}
-              />
-              <Select
-                isMulti
-                name="preferred_languages"
-                options={languages.map((language) => ({ value: language, label: language }))}
-                value={studentDetails.preferred_languages.map((language) => ({ value: language, label: language }))}
-                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_languages')}
-              />
-              <Select
-                isMulti
-                name="challenging_subject_areas"
-                options={challengingSubjects.map((subject) => ({ value: subject, label: subject }))}
-                value={studentDetails.challenging_subject_areas.map((subject) => ({ value: subject, label: subject }))}
-                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'challenging_subject_areas')}
-              />
-              <Select
-                isMulti
-                name="preferred_content_platforms"
-                options={contentPlatforms.map((platform) => ({ value: platform, label: platform }))}
-                value={studentDetails.preferred_content_platforms.map((platform) => ({ value: platform, label: platform }))}
-                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_content_platforms')}
-              />
-              <Select
-                isMulti
-                name="topics_of_interest"
-                options={topicsOfInterest.map((topic) => ({ value: topic, label: topic }))}
-                value={studentDetails.topics_of_interest.map((topic) => ({ value: topic, label: topic }))}
-                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'topics_of_interest')}
-              />
+  isMulti
+  name="preferred_learning_methods"
+  options={learningMethods.map((method) => ({ value: method, label: method }))}
+  value={studentDetails.preferred_learning_methods.map((method) => ({ value: method, label: method }))}
+  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_learning_methods')}
+  placeholder="Select your preferred learning methods"
+/>
+<Select
+  isMulti
+  name="preferred_study_times"
+  options={studyTimes.map((time) => ({ value: time, label: time }))}
+  value={studentDetails.preferred_study_times.map((time) => ({ value: time, label: time }))}
+  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_study_times')}
+  placeholder="Select your preferred study times"
+/>
+<Select
+  isMulti
+  name="preferred_languages"
+  options={languages.map((language) => ({ value: language, label: language }))}
+  value={studentDetails.preferred_languages.map((language) => ({ value: language, label: language }))}
+  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_languages')}
+  placeholder="Select your preferred languages"
+/>
+<Select
+  isMulti
+  name="challenging_subject_areas"
+  options={challengingSubjects.map((subject) => ({ value: subject, label: subject }))}
+  value={studentDetails.challenging_subject_areas.map((subject) => ({ value: subject, label: subject }))}
+  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'challenging_subject_areas')}
+  placeholder="Select challenging subjects"
+/>
+<Select
+  isMulti
+  name="preferred_content_platforms"
+  options={contentPlatforms.map((platform) => ({ value: platform, label: platform }))}
+  value={studentDetails.preferred_content_platforms.map((platform) => ({ value: platform, label: platform }))}
+  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_content_platforms')}
+  placeholder="Select preferred content platforms"
+/>
+<Select
+  isMulti
+  name="topics_of_interest"
+  options={topicsOfInterest.map((topic) => ({ value: topic, label: topic }))}
+  value={studentDetails.topics_of_interest.map((topic) => ({ value: topic, label: topic }))}
+  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'topics_of_interest')}
+  placeholder="Select topics of interest"
+/>
+
             </section>
 
             <section className="form-section">
