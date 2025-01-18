@@ -1,6 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
+import pickle
+import pickle
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import OneHotEncoder
 
 app = Flask(__name__)
 CORS(app)
@@ -99,9 +105,56 @@ def submit_form():
 
 
 
+@app.route('/recommendations', methods=['POST'])
+def get_recommendations():
+    # Parse JSON data from the request
+    data = request.json
+    print("Received data:", data)  # Log incoming request data
 
+    student_number = data.get('student_number')  # Ensure the key matches the React request body
+    print("Extracted student_number:", student_number)  # Log extracted student_number
 
+    # Check if student_number is provided
+    if not student_number:
+        print("Error: No student number provided in the request.")  # Log error
+        return jsonify({"message": "Student number is required."}), 400
 
+    try:
+        # Load course and video recommendations from pickle files
+        course_recommendations_path = 'D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/course_recommendations.pkl'
+        video_recommendations_path = 'D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/video_recommendations.pkl'
+
+        print("Loading recommendations from pickle files...")  # Log file loading
+
+        # Ensure file paths are correct and files exist
+        with open(course_recommendations_path, 'rb') as f:
+            course_recommendations = pickle.load(f)
+        print("Course recommendations loaded successfully.")  # Log successful loading
+
+        with open(video_recommendations_path, 'rb') as f:
+            video_recommendations = pickle.load(f)
+        print("Video recommendations loaded successfully.")  # Log successful loading
+
+        # Fetch recommendations for the provided student number
+        student_courses = course_recommendations.get(student_number, [])
+        student_videos = video_recommendations.get(student_number, [])
+
+        print("Recommendations fetched for student_number:", student_number)  # Log fetched data
+        print("Courses:", student_courses)  # Log fetched courses
+        print("Videos:", student_videos)  # Log fetched videos
+
+        # Return recommendations as JSON
+        return jsonify({
+            "courses": student_courses,
+            "videos": student_videos
+        }), 200
+
+    except FileNotFoundError as fnf_error:
+        print("FileNotFoundError:", fnf_error)  # Log missing file error
+        return jsonify({"message": "Recommendation files not found. Ensure paths are correct."}), 500
+    except Exception as e:
+        print("Error occurred while fetching recommendations:", e)  # Log any other error
+        return jsonify({"message": "An error occurred while fetching recommendations."}), 500
 
 
 if __name__ == '__main__':
