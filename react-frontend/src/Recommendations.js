@@ -18,6 +18,7 @@ function Recommendations() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("Fetched recommendations:", data);
         setRecommendations(data);
       } else {
         console.error("Failed to fetch recommendations");
@@ -29,7 +30,7 @@ function Recommendations() {
 
   return (
     <div>
-      {/* Navbar Section */}
+      {/* Navbar */}
       <nav className="navbar">
         <h1 className="navbar-logo">MyApp</h1>
         <ul className="navbar-links">
@@ -50,60 +51,68 @@ function Recommendations() {
         <button onClick={fetchRecommendations}>Get Recommendations</button>
       </div>
 
-      {/* Recommendations Section */}
+      {/* Recommendations */}
       <div className="recommendations-container">
         <h1 className="recommendations-title">Recommendations</h1>
 
-        {/* Courses Section */}
+        {/* Courses */}
         <h2 className="section-title">Courses</h2>
         <div className="recommendations-row">
-          {recommendations.courses.map((item, index) => (
-            <div key={index} className="recommendation-card">
-              <img
-                src={item.thumbnail || "https://via.placeholder.com/300x180"}
-                alt="Course Thumbnail"
-                className="recommendation-thumbnail"
-              />
-              <div className="recommendation-content">
-                <h2 className="recommendation-title">{item.title}</h2>
-                <p className="recommendation-description">{item.description}</p>
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="recommendation-link"
-                >
-                  View Course
-                </a>
+          {recommendations.courses.length > 0 ? (
+            recommendations.courses.map((item, index) => (
+              <div key={index} className="recommendation-card">
+                <img
+                  src={item.thumbnail || "https://via.placeholder.com/300x180"}
+                  alt="Course Thumbnail"
+                  className="recommendation-thumbnail"
+                />
+                <div className="recommendation-content">
+                  <h2 className="recommendation-title">{item.title}</h2>
+                  <p className="recommendation-description">{item.description}</p>
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="recommendation-link"
+                  >
+                    View Course
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No course recommendations available.</p>
+          )}
         </div>
 
-        {/* Videos Section */}
+        {/* Videos */}
         <h2 className="section-title">Videos</h2>
         <div className="recommendations-row">
-          {recommendations.videos.map((item, index) => (
-            <div key={index} className="recommendation-card">
-              <img
-                src={item.thumbnail || "https://via.placeholder.com/300x180"}
-                alt="Video Thumbnail"
-                className="recommendation-thumbnail"
-              />
-              <div className="recommendation-content">
-                <h2 className="recommendation-title">{item.title}</h2>
-                <p className="recommendation-description">{item.description}</p>
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="recommendation-link"
-                >
-                  View Video
-                </a>
+          {recommendations.videos.length > 0 ? (
+            recommendations.videos.map((item, index) => (
+              <div key={index} className="recommendation-card">
+                <img
+                  src={item.thumbnail || "https://via.placeholder.com/300x180"}
+                  alt="Video Thumbnail"
+                  className="recommendation-thumbnail"
+                />
+                <div className="recommendation-content">
+                  <h2 className="recommendation-title">{item.title}</h2>
+                  <p className="recommendation-description">{item.description}</p>
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="recommendation-link"
+                  >
+                    View Video
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No video recommendations available.</p>
+          )}
         </div>
       </div>
     </div>

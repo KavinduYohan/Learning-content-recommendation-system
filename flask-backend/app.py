@@ -2,11 +2,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
 import pickle
-import pickle
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import OneHotEncoder
+
+import pandas as pd
+import logging
+
+
 
 app = Flask(__name__)
 CORS(app)
@@ -104,58 +108,87 @@ def submit_form():
     return jsonify({"message": "Form submitted successfully!"}), 201
 
 
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Load matrices and models
+video_matrix = np.load('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/video_matrix.npy')
+course_matrix = np.load('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/course_matrix.npy')
+
+# Load pickled objects
+with open('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/tfidf_vectorizer.pkl', 'rb') as f:
+    tfidf_vectorizer = pickle.load(f)
+
+with open('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/onehot_encoder.pkl', 'rb') as f:
+    onehot_encoder = pickle.load(f)
+
+# Load CSV files
+videos_df = pd.read_csv('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/course_recommendations_multilang.csv')
+courses_df = pd.read_csv('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/synthetic_courses_dataset2.csv')
+
+
+# Helper function to preprocess student data into feature vector
+def preprocess_student_data(student_row):
+    student_preferences = " ".join(str(field) for field in student_row[6:12] if field)  # Preferred methods, languages, etc.
+    student_vector = tfidf_vectorizer.transform([student_preferences])
+    logging.debug(f"Preprocessing student data... Preferences: {student_preferences}")
+    logging.debug(f"Student vector shape: {student_vector.shape}")
+    return student_vector
 
 @app.route('/recommendations', methods=['POST'])
-def get_recommendations():
-    # Parse JSON data from the request
+def recommendations():
     data = request.json
-    print("Received data:", data)  # Log incoming request data
+    student_number = data.get('student_number')
 
-    student_number = data.get('student_number')  # Ensure the key matches the React request body
-    print("Extracted student_number:", student_number)  # Log extracted student_number
+    logging.debug(f"Received student number: {student_number}")
 
-    # Check if student_number is provided
-    if not student_number:
-        print("Error: No student number provided in the request.")  # Log error
-        return jsonify({"message": "Student number is required."}), 400
+    # Fetch student data from MySQL (assuming MySQL connection is set up elsewhere)
+    cursor.execute("SELECT * FROM students WHERE student_number = %s", (student_number,))
+    student_row = cursor.fetchone()
 
-    try:
-        # Load course and video recommendations from pickle files
-        course_recommendations_path = 'D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/course_recommendations.pkl'
-        video_recommendations_path = 'D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/video_recommendations.pkl'
+    if not student_row:
+        logging.error(f"Student not found: {student_number}")
+        return jsonify({"error": "Student not found"}), 404
 
-        print("Loading recommendations from pickle files...")  # Log file loading
+    logging.debug(f"Fetched student row: {student_row}")
 
-        # Ensure file paths are correct and files exist
-        with open(course_recommendations_path, 'rb') as f:
-            course_recommendations = pickle.load(f)
-        print("Course recommendations loaded successfully.")  # Log successful loading
+    # Transform student data to vector
+    student_vector = preprocess_student_data(student_row)
 
-        with open(video_recommendations_path, 'rb') as f:
-            video_recommendations = pickle.load(f)
-        print("Video recommendations loaded successfully.")  # Log successful loading
+    # Compute recommendations
+    course_scores = cosine_similarity(student_vector, course_matrix).flatten()
+    top_course_indices = np.argsort(course_scores)[-5:][::-1]  # Top 5 courses
+    video_scores = cosine_similarity(student_vector, video_matrix).flatten()
+    top_video_indices = np.argsort(video_scores)[-5:][::-1]  # Top 5 videos
 
-        # Fetch recommendations for the provided student number
-        student_courses = course_recommendations.get(student_number, [])
-        student_videos = video_recommendations.get(student_number, [])
+    logging.debug(f"Top course indices: {top_course_indices}")
+    logging.debug(f"Top video indices: {top_video_indices}")
 
-        print("Recommendations fetched for student_number:", student_number)  # Log fetched data
-        print("Courses:", student_courses)  # Log fetched courses
-        print("Videos:", student_videos)  # Log fetched videos
+    # Prepare recommendations response
+    recommended_courses = [
+        {
+            "title": courses_df.iloc[i]["Title"],
+            "description": courses_df.iloc[i]["Description"],
+            "link": courses_df.iloc[i]["URLs"],
+            "thumbnail": courses_df.iloc[i].get("Images", "https://via.placeholder.com/300x180")
+        }
+        for i in top_course_indices
+    ]
+    recommended_videos = [
+        {
+            "title": videos_df.iloc[i]["Title"],
+            "description": videos_df.iloc[i]["Description"],
+            "link": videos_df.iloc[i]["URLs"],
+            "thumbnail": videos_df.iloc[i].get("Images", "https://via.placeholder.com/300x180")
+        }
+        for i in top_video_indices
+    ]
 
-        # Return recommendations as JSON
-        return jsonify({
-            "courses": student_courses,
-            "videos": student_videos
-        }), 200
+    # Log final recommendations
+    logging.debug(f"Recommended courses: {recommended_courses}")
+    logging.debug(f"Recommended videos: {recommended_videos}")
 
-    except FileNotFoundError as fnf_error:
-        print("FileNotFoundError:", fnf_error)  # Log missing file error
-        return jsonify({"message": "Recommendation files not found. Ensure paths are correct."}), 500
-    except Exception as e:
-        print("Error occurred while fetching recommendations:", e)  # Log any other error
-        return jsonify({"message": "An error occurred while fetching recommendations."}), 500
-
+    return jsonify({"courses": recommended_courses, "videos": recommended_videos})
 
 if __name__ == '__main__':
     app.run(debug=True)
