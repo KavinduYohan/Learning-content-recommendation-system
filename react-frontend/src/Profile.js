@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Profile.css';
-// import MultiSelectField from './components/MultiSelectField'; // Import the reusable MultiSelectField component
 import Navbar from "./components/Navbar";
-import Select from 'react-select'; // Import react-select
+import Select from 'react-select';
 
 function Profile() {
   const [studentDetails, setStudentDetails] = useState({
@@ -24,8 +23,8 @@ function Profile() {
     suggestions: '',
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false); // Manage form submission state
-  const [message, setMessage] = useState(''); // Manage feedback message
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
 
   const levels = [1, 2, 3, 4];
   const programs = [
@@ -45,55 +44,40 @@ function Profile() {
   const challengingSubjects = ['Computer Sciences', 'Industrial Management', 'Electronics', 'Mathematics & Statistics'];
   const contentPlatforms = ['YouTube', 'Coursera', 'Khan Academy', 'Udemy', 'Udacity'];
   const topicsOfInterest = [
-    'Web Development',
-    'Machine Learning',
-    'Supply Chain Management',
-    'Logistics and Transportation',
-    'Digital Electronics',
-    'Robotics and Automation',
-    'Statistical Modeling',
-    'Time Series Analysis',
-    'Artificial Intelligence',
-    'Data Science',
-    'Cybersecurity',
+    'Web Development', 'Machine Learning', 'Supply Chain Management', 'Logistics and Transportation',
+    'Digital Electronics', 'Robotics and Automation', 'Statistical Modeling', 'Time Series Analysis',
+    'Artificial Intelligence', 'Data Science', 'Cybersecurity'
   ];
 
-  // Handle multi-select inputs
   const handleMultiSelectChange = (selectedOptions, field) => {
     const values = selectedOptions ? selectedOptions.map(option => option.value) : [];
-    setStudentDetails((prev) => ({ ...prev, [field]: values }));
+    setStudentDetails(prev => ({ ...prev, [field]: values }));
   };
 
-  // Handle single-select inputs
-  const handleSelectChange = (value, field) => {
-    setStudentDetails((prev) => ({ ...prev, [field]: value }));
+  const handleSelectChange = (e, field) => {
+    setStudentDetails(prev => ({ ...prev, [field]: e.target.value }));
   };
 
   const handleInputChange = (e, field) => {
-    const { value } = e.target;
-    setStudentDetails((prev) => ({ ...prev, [field]: value }));
+    setStudentDetails(prev => ({ ...prev, [field]: e.target.value }));
   };
 
-  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(studentDetails);
     setIsSubmitting(true);
     setMessage('Submitting your data...');
 
     try {
       const response = await fetch('http://localhost:5000/submit-form', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(studentDetails),
       });
 
       if (response.ok) {
         setMessage('Form submitted successfully!');
       } else {
-        setMessage('There was an error submitting the form.');
+        setMessage('Error submitting the form.');
       }
     } catch (error) {
       setMessage('An error occurred while submitting the form.');
@@ -105,7 +89,6 @@ function Profile() {
   return (
     <div className="profile-wrapper">
       <Navbar />
-    
       <div className="profile-container">
         <div className="profile-left">
           <img
@@ -116,7 +99,6 @@ function Profile() {
           <div className="basic-details">
             <h2>{studentDetails.first_name} {studentDetails.last_name}</h2>
             <p>Student Number: {studentDetails.student_number}</p>
-            <p>Email: {studentDetails.email}</p>
           </div>
         </div>
 
@@ -125,128 +107,62 @@ function Profile() {
           <form className="form-container" onSubmit={handleSubmit}>
             <section className="form-section">
               <h3>Personal Details</h3>
-              <input
-                type="text"
-                name="user_id"
-                placeholder="Enter User ID"
-                value={studentDetails.user_id}
-                onChange={(e) => handleInputChange(e, 'user_id')}
-              />
-               <input
-                type="text"
-                name="student_number"
-                placeholder="Enter Student Number"
-                value={studentDetails.student_number}
-                onChange={(e) => handleInputChange(e, 'student_number')}
-              />
-              <input
-                type="text"
-                name="first_name"
-                placeholder="Enter First Name"
-                value={studentDetails.first_name}
-                onChange={(e) => handleInputChange(e, 'first_name')}
-              />
-              <input
-                type="text"
-                name="last_name"
-                placeholder="Enter Last Name"
-                value={studentDetails.last_name}
-                onChange={(e) => handleInputChange(e, 'last_name')}
-              />
+              <input type="text" placeholder="User ID" value={studentDetails.user_id} onChange={(e) => handleInputChange(e, 'user_id')} required />
+              <input type="text" placeholder="Student Number" value={studentDetails.student_number} onChange={(e) => handleInputChange(e, 'student_number')} required />
+              <input type="text" placeholder="First Name" value={studentDetails.first_name} onChange={(e) => handleInputChange(e, 'first_name')} required />
+              <input type="text" placeholder="Last Name" value={studentDetails.last_name} onChange={(e) => handleInputChange(e, 'last_name')} required />
             </section>
 
             <section className="form-section">
               <h3>Academic Details</h3>
-              <select
-                value={studentDetails.level}
-                onChange={(e) => handleSelectChange(e.target.value, 'level')}
-              >
+              <select value={studentDetails.level} onChange={(e) => handleSelectChange(e, 'level')} required>
                 <option value="">Select Level</option>
-                {levels.map((level, index) => (
-                  <option key={index} value={level}>{level}</option>
-                ))}
+                {levels.map(level => <option key={level} value={level}>{level}</option>)}
               </select>
-              <select
-                value={studentDetails.program}
-                onChange={(e) => handleSelectChange(e.target.value, 'program')}
-              >
+              <select value={studentDetails.program} onChange={(e) => handleSelectChange(e, 'program')} required>
                 <option value="">Select Program</option>
-                {programs.map((program, index) => (
-                  <option key={index} value={program}>{program}</option>
-                ))}
+                {programs.map(program => <option key={program} value={program}>{program}</option>)}
               </select>
             </section>
 
             <section className="form-section">
               <h3>Preferences</h3>
-              <Select
-  isMulti
-  name="preferred_learning_methods"
-  options={learningMethods.map((method) => ({ value: method, label: method }))}
-  value={studentDetails.preferred_learning_methods.map((method) => ({ value: method, label: method }))}
-  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_learning_methods')}
-  placeholder="Select your preferred learning methods"
-/>
-<Select
-  isMulti
-  name="preferred_study_times"
-  options={studyTimes.map((time) => ({ value: time, label: time }))}
-  value={studentDetails.preferred_study_times.map((time) => ({ value: time, label: time }))}
-  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_study_times')}
-  placeholder="Select your preferred study times"
-/>
-<Select
-  isMulti
-  name="preferred_languages"
-  options={languages.map((language) => ({ value: language, label: language }))}
-  value={studentDetails.preferred_languages.map((language) => ({ value: language, label: language }))}
-  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_languages')}
-  placeholder="Select your preferred languages"
-/>
-<Select
-  isMulti
-  name="challenging_subject_areas"
-  options={challengingSubjects.map((subject) => ({ value: subject, label: subject }))}
-  value={studentDetails.challenging_subject_areas.map((subject) => ({ value: subject, label: subject }))}
-  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'challenging_subject_areas')}
-  placeholder="Select challenging subjects"
-/>
-<Select
-  isMulti
-  name="preferred_content_platforms"
-  options={contentPlatforms.map((platform) => ({ value: platform, label: platform }))}
-  value={studentDetails.preferred_content_platforms.map((platform) => ({ value: platform, label: platform }))}
-  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_content_platforms')}
-  placeholder="Select preferred content platforms"
-/>
-<Select
-  isMulti
-  name="topics_of_interest"
-  options={topicsOfInterest.map((topic) => ({ value: topic, label: topic }))}
-  value={studentDetails.topics_of_interest.map((topic) => ({ value: topic, label: topic }))}
-  onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'topics_of_interest')}
-  placeholder="Select topics of interest"
-/>
+              <Select isMulti name="preferred_learning_methods" options={learningMethods.map(m => ({ value: m, label: m }))} 
+                      value={studentDetails.preferred_learning_methods.map(m => ({ value: m, label: m }))}
+                      onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_learning_methods')} 
+                      placeholder="Preferred Learning Methods" required />
 
+              <Select isMulti name="preferred_study_times" options={studyTimes.map(t => ({ value: t, label: t }))} 
+                      value={studentDetails.preferred_study_times.map(t => ({ value: t, label: t }))}
+                      onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_study_times')} 
+                      placeholder="Preferred Study Times" required />
+
+              <Select isMulti name="preferred_languages" options={languages.map(l => ({ value: l, label: l }))} 
+                      value={studentDetails.preferred_languages.map(l => ({ value: l, label: l }))}
+                      onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_languages')} 
+                      placeholder="Preferred Languages" required />
+
+              <Select isMulti name="challenging_subject_areas" options={challengingSubjects.map(s => ({ value: s, label: s }))} 
+                      value={studentDetails.challenging_subject_areas.map(s => ({ value: s, label: s }))}
+                      onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'challenging_subject_areas')} 
+                      placeholder="Challenging Subjects" required />
+
+              <Select isMulti name="preferred_content_platforms" options={contentPlatforms.map(c => ({ value: c, label: c }))} 
+                      value={studentDetails.preferred_content_platforms.map(c => ({ value: c, label: c }))}
+                      onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'preferred_content_platforms')} 
+                      placeholder="Preferred Content Platforms" required />
+
+              <Select isMulti name="topics_of_interest" options={topicsOfInterest.map(t => ({ value: t, label: t }))} 
+                      value={studentDetails.topics_of_interest.map(t => ({ value: t, label: t }))}
+                      onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'topics_of_interest')} 
+                      placeholder="Topics of Interest" required />
             </section>
 
             <section className="form-section">
               <h3>Goals & Feedback</h3>
-              <textarea
-                placeholder="Future Goals"
-                value={studentDetails.future_goals}
-                onChange={(e) => handleInputChange(e, 'future_goals')}
-              />
-              <textarea
-                placeholder="Challenges"
-                value={studentDetails.challenges}
-                onChange={(e) => handleInputChange(e, 'challenges')}
-              />
-              <textarea
-                placeholder="Suggestions"
-                value={studentDetails.suggestions}
-                onChange={(e) => handleInputChange(e, 'suggestions')}
-              />
+              <textarea placeholder="Future Goals" value={studentDetails.future_goals} onChange={(e) => handleInputChange(e, 'future_goals')} />
+              <textarea placeholder="Challenges" value={studentDetails.challenges} onChange={(e) => handleInputChange(e, 'challenges')} />
+              <textarea placeholder="Suggestions" value={studentDetails.suggestions} onChange={(e) => handleInputChange(e, 'suggestions')} />
             </section>
 
             <button type="submit" className="save-button" disabled={isSubmitting}>
@@ -255,15 +171,13 @@ function Profile() {
           </form>
           {message && <p className="submission-message">{message}</p>}
         </div>
-
-        <div className="profile-extra">
-          <h2>Resources & Links</h2>
-          <p>Explore recommended materials for your selected topics of interest!</p>
-          <Link to="/recommendations">
-            <button className="get-recommendations-button">Get Recommendations</button>
-          </Link>
-        </div>
+        <Link to="/recommendations">
+  <button className="recommendation-button">
+    Go to Recommendation Page
+  </button>
+</Link>
       </div>
+      
     </div>
   );
 }

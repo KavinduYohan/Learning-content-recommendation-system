@@ -20,7 +20,7 @@ db = mysql.connector.connect(
     host="localhost",
     user="root", 
     password="Kavindu1495?", 
-    database="learningContent"  
+    database="learningContent3"  
 )
 
 cursor = db.cursor()
@@ -57,56 +57,71 @@ def login():
         return jsonify({"message": "Login successful!"})
     else:
         return jsonify({"message": "Invalid username or password."}), 401
+    
 
 @app.route('/submit-form', methods=['POST'])
 def submit_form():
     data = request.json
+
+    logging.debug(f"Received data: {data}")
+
+    required_fields = ['user_id', 'student_number', 'first_name', 'last_name', 'level', 'program']
+    for field in required_fields:
+        if not data.get(field):
+            logging.error(f"Missing required field: {field}")
+            return jsonify({'error': f'Missing required field: {field}'}), 400
+
     try:
-        with db.cursor() as cursor:  # Automatically closes the cursor
+        # Use the existing connection and cursor for executing the query
+        sql = """
+        INSERT INTO students (
+            user_id, student_number, first_name, last_name, level, program,
+            preferred_learning_method, preferred_study_time, preferred_language,
+            challenging_subject_areas, preferred_content_platforms, topics_of_interest,
+            future_goals, challenges, suggestions
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
 
-            # Extract form data
-            user_id = data.get('user_id')
-            student_number = data.get('student_number')
-            first_name = data.get('first_name')
-            last_name = data.get('last_name')
-            level = data.get('level')
-            program = data.get('program')
-            preferred_learning_methods = ','.join(data.get('preferred_learning_methods', [])) or None
-            preferred_study_times = ','.join(data.get('preferred_study_times', [])) or None
-            preferred_languages = ','.join(data.get('preferred_languages', [])) or None
-            challenging_subject_areas = ','.join(data.get('challenging_subject_areas', [])) or None
-            preferred_content_platforms = ','.join(data.get('preferred_content_platforms', [])) or None
-            topics_of_interest = ','.join(data.get('topics_of_interest', [])) or None
-            future_goals = data.get('future_goals')
-            challenges = data.get('challenges')
-            suggestions = data.get('suggestions')
+        values = (
+            int(data['user_id']), 
+            data['student_number'], 
+            data['first_name'], 
+            data['last_name'], 
+            int(data['level']), 
+            data['program'],
+            ','.join(data.get('preferred_learning_methods', [])) or None,
+            ','.join(data.get('preferred_study_times', [])) or None,
+            ','.join(data.get('preferred_languages', [])) or None,
+            ','.join(data.get('challenging_subject_areas', [])) or None,
+            ','.join(data.get('preferred_content_platforms', [])) or None,
+            ','.join(data.get('topics_of_interest', [])) or None,
+            data.get('future_goals') or None,
+            data.get('challenges') or None,
+            data.get('suggestions') or None
+        )
 
-            # Validate required fields
-            if not (user_id and student_number and first_name and last_name and level and program):
-                return jsonify({"message": "Missing required fields"}), 400
+        logging.debug(f"Executing SQL: {sql}")
+        logging.debug(f"With values: {values}")
 
-            # Insert data into the database
-            cursor.execute(""" 
-                INSERT INTO students (
-                    user_id, student_number, first_name, last_name, level, program,
-                    preferred_learning_method, preferred_study_time, preferred_language,
-                    challenging_subject_areas, preferred_content_platforms,
-                    topics_of_interest, future_goals, challenges, suggestions
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (user_id, student_number, first_name, last_name, level, program,
-                  preferred_learning_methods, preferred_study_times, preferred_languages,
-                  challenging_subject_areas, preferred_content_platforms,
-                  topics_of_interest, future_goals, challenges, suggestions))
+        # Execute the query using the existing cursor
+        cursor.execute(sql, values)
+        db.commit()
 
-            db.commit()
+        logging.info("Form submitted successfully")
+
+        return jsonify({'message': 'Form submitted successfully'}), 200
+
+    except mysql.connector.Error as db_err:
+        logging.error(f"Database error: {db_err}")
+        return jsonify({'error': f'Database error: {str(db_err)}'}), 500
 
     except Exception as e:
-        import traceback
-        print("Error:", traceback.format_exc())
-        return jsonify({"message": "An internal error occurred. Please try again later."}), 500
+        logging.error(f"Unexpected error: {e}")
+        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
 
-    return jsonify({"message": "Form submitted successfully!"}), 201
-
+    finally:
+        # No need to close cursor and connection here, as they are managed globally
+        logging.debug("Form submission complete")
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)

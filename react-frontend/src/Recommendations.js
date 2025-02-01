@@ -19,7 +19,28 @@ function Recommendations() {
       if (response.ok) {
         const data = await response.json();
         console.log("Fetched recommendations:", data);
-        setRecommendations(data);
+
+        // Handle potential NaN values by sanitizing response
+        const sanitizedData = {
+          courses: data.courses.map(course => ({
+            title: course.title || "No Title Available",
+            description: course.description && course.description !== "NaN" 
+              ? course.description 
+              : "No description available",
+            link: course.link || "#",
+            thumbnail: course.thumbnail || "https://via.placeholder.com/300x180"
+          })),
+          videos: data.videos.map(video => ({
+            title: video.title || "No Title Available",
+            description: video.description && video.description !== "NaN" 
+              ? video.description 
+              : "No description available",
+            link: video.link || "#",
+            thumbnail: video.thumbnail || "https://via.placeholder.com/300x180"
+          })),
+        };
+
+        setRecommendations(sanitizedData);
       } else {
         console.error("Failed to fetch recommendations");
       }
@@ -62,7 +83,7 @@ function Recommendations() {
             recommendations.courses.map((item, index) => (
               <div key={index} className="recommendation-card">
                 <img
-                  src={item.thumbnail || "https://via.placeholder.com/300x180"}
+                  src={item.thumbnail}
                   alt="Course Thumbnail"
                   className="recommendation-thumbnail"
                 />
@@ -92,7 +113,7 @@ function Recommendations() {
             recommendations.videos.map((item, index) => (
               <div key={index} className="recommendation-card">
                 <img
-                  src={item.thumbnail || "https://via.placeholder.com/300x180"}
+                  src={item.thumbnail}
                   alt="Video Thumbnail"
                   className="recommendation-thumbnail"
                 />
