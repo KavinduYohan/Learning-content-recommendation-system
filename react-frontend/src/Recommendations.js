@@ -10,11 +10,13 @@ function Recommendations() {
     try {
       const response = await fetch("http://localhost:5000/recommendations", {
         method: "POST",
+        credentials: "include",  // 🔥 Ensures cookies (session) are sent
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ student_number: studentNumber }),
       });
+      
 
       if (response.ok) {
         const data = await response.json();

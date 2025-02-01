@@ -1,209 +1,176 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
 import mysql.connector
 import pickle
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import OneHotEncoder
-
 import pandas as pd
 import logging
+from functools import wraps
+from flask_session import Session
+import os
+
 
 
 
 app = Flask(__name__)
-CORS(app)
-
-# Connect to MySQL database
-db = mysql.connector.connect(
-    host="localhost",
-    user="root", 
-    password="Kavindu1495?", 
-    database="learningContent3"  
-)
-
-cursor = db.cursor()
-cursor.execute("SHOW TABLES")
-print(cursor.fetchall())  # Verify that tables are listed
+app.config['SECRET_KEY'] = '0755836572'  # Replace with a strong, unique key
+CORS(app, supports_credentials=True)
 
 
-@app.route('/signup', methods=['POST'])
-def signup():
-    data = request.json
-    username = data['username']
-    password = data['password']
-    try:
-        cursor = db.cursor()  # Create a cursor for the current request
-        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
-        db.commit()
-        return jsonify({"message": "User signed up successfully!"})
-    except mysql.connector.IntegrityError as e:
-        print("Integrity Error:", e)  # Log the exact error
-        return jsonify({"message": "Username already exists."}), 400
-    except Exception as e:
-        print("Error:", e)  # Log any other errors
-        return jsonify({"message": "An error occurred."}), 500
 
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"  # Stores session files on the server
+Session(app)  # Initialize session management
 
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.json
-    username = data['username']
-    password = data['password']
-    cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
-    user = cursor.fetchone()
-    if user:
-        return jsonify({"message": "Login successful!"})
-    else:
-        return jsonify({"message": "Invalid username or password."}), 401
-    
-
-@app.route('/submit-form', methods=['POST'])
-def submit_form():
-    data = request.json
-
-    logging.debug(f"Received data: {data}")
-
-    required_fields = ['user_id', 'student_number', 'first_name', 'last_name', 'level', 'program']
-    for field in required_fields:
-        if not data.get(field):
-            logging.error(f"Missing required field: {field}")
-            return jsonify({'error': f'Missing required field: {field}'}), 400
-
-    try:
-        # Use the existing connection and cursor for executing the query
-        sql = """
-        INSERT INTO students (
-            user_id, student_number, first_name, last_name, level, program,
-            preferred_learning_method, preferred_study_time, preferred_language,
-            challenging_subject_areas, preferred_content_platforms, topics_of_interest,
-            future_goals, challenges, suggestions
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-
-        values = (
-            int(data['user_id']), 
-            data['student_number'], 
-            data['first_name'], 
-            data['last_name'], 
-            int(data['level']), 
-            data['program'],
-            ','.join(data.get('preferred_learning_methods', [])) or None,
-            ','.join(data.get('preferred_study_times', [])) or None,
-            ','.join(data.get('preferred_languages', [])) or None,
-            ','.join(data.get('challenging_subject_areas', [])) or None,
-            ','.join(data.get('preferred_content_platforms', [])) or None,
-            ','.join(data.get('topics_of_interest', [])) or None,
-            data.get('future_goals') or None,
-            data.get('challenges') or None,
-            data.get('suggestions') or None
-        )
-
-        logging.debug(f"Executing SQL: {sql}")
-        logging.debug(f"With values: {values}")
-
-        # Execute the query using the existing cursor
-        cursor.execute(sql, values)
-        db.commit()
-
-        logging.info("Form submitted successfully")
-
-        return jsonify({'message': 'Form submitted successfully'}), 200
-
-    except mysql.connector.Error as db_err:
-        logging.error(f"Database error: {db_err}")
-        return jsonify({'error': f'Database error: {str(db_err)}'}), 500
-
-    except Exception as e:
-        logging.error(f"Unexpected error: {e}")
-        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
-
-    finally:
-        # No need to close cursor and connection here, as they are managed globally
-        logging.debug("Form submission complete")
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Load matrices and models
-video_matrix = np.load('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/video_matrix.npy')
-course_matrix = np.load('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/course_matrix.npy')
+def get_db_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Kavindu1495?",
+        database="learningContent3"
+    )
 
-# Load pickled objects
-with open('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/tfidf_vectorizer.pkl', 'rb') as f:
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({"message": "Unauthorized access!"}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+        db.commit()
+        return jsonify({"message": "User signed up successfully!"})
+    except mysql.connector.IntegrityError:
+        return jsonify({"message": "Username already exists."}), 400
+    except Exception as e:
+        return jsonify({"message": "An error occurred.", "error": str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    
+    db = get_db_connection()
+    cursor = db.cursor()
+    cursor.execute("SELECT id, username FROM users WHERE username = %s AND password = %s", (username, password))
+    user = cursor.fetchone()
+    cursor.close()
+    db.close()
+    
+    if user:
+        session['user_id'] = user[0]
+        return jsonify({"message": "Login successful!", "user_id": user[0]})
+    else:
+        return jsonify({"message": "Invalid credentials!"}), 401
+
+
+
+@app.route('/submit-form', methods=['POST'])
+@login_required
+def submit_form():
+    data = request.json
+    print("Received Data:", data)
+    required_fields = ['user_id', 'student_number', 'first_name', 'last_name', 'level', 'program']
+    if not all(data.get(field) for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        sql = """
+        INSERT INTO students (user_id, student_number, first_name, last_name, level, program, 
+            preferred_learning_method, preferred_study_time, preferred_language, challenging_subject_areas, 
+            preferred_content_platforms, topics_of_interest, future_goals, challenges, suggestions) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        values = (
+            data['user_id'], data['student_number'], data['first_name'], data['last_name'], data['level'], data['program'],
+            ','.join(data.get('preferred_learning_methods', [])), ','.join(data.get('preferred_study_times', [])),
+            ','.join(data.get('preferred_languages', [])), ','.join(data.get('challenging_subject_areas', [])),
+            ','.join(data.get('preferred_content_platforms', [])), ','.join(data.get('topics_of_interest', [])),
+            data.get('future_goals'), data.get('challenges'), data.get('suggestions')
+        )
+        cursor.execute(sql, values)
+        db.commit()
+        return jsonify({'message': 'Form submitted successfully'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
+
+# Load models and datasets
+video_matrix = np.load('video_matrix.npy')
+course_matrix = np.load('course_matrix.npy')
+with open('tfidf_vectorizer.pkl', 'rb') as f:
     tfidf_vectorizer = pickle.load(f)
 
-with open('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/onehot_encoder.pkl', 'rb') as f:
-    onehot_encoder = pickle.load(f)
+videos_df = pd.read_csv('course_recommendations_multilang.csv')
+courses_df = pd.read_csv('synthetic_courses_dataset2.csv')
 
-# Load CSV files
-videos_df = pd.read_csv('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/course_recommendations_multilang.csv')
-courses_df = pd.read_csv('D:/Academic/4th Year/CMIS 4114 - Artificial Intelligence/leaning content recomandation/flask-backend/synthetic_courses_dataset2.csv')
-
-
-# Helper function to preprocess student data into feature vector
 def preprocess_student_data(student_row):
-    student_preferences = " ".join(str(field) for field in student_row[6:12] if field)  # Preferred methods, languages, etc.
-    student_vector = tfidf_vectorizer.transform([student_preferences])
-    logging.debug(f"Preprocessing student data... Preferences: {student_preferences}")
-    logging.debug(f"Student vector shape: {student_vector.shape}")
-    return student_vector
+    student_preferences = " ".join(str(field) for field in student_row[6:12] if field)
+    return tfidf_vectorizer.transform([student_preferences])
 
 @app.route('/recommendations', methods=['POST'])
+@login_required
 def recommendations():
     data = request.json
     student_number = data.get('student_number')
-
-    logging.debug(f"Received student number: {student_number}")
-
-    # Fetch student data from MySQL (assuming MySQL connection is set up elsewhere)
+    
+    db = get_db_connection()
+    cursor = db.cursor()
     cursor.execute("SELECT * FROM students WHERE student_number = %s", (student_number,))
     student_row = cursor.fetchone()
-
+    cursor.close()
+    db.close()
+    
     if not student_row:
-        logging.error(f"Student not found: {student_number}")
         return jsonify({"error": "Student not found"}), 404
-
-    logging.debug(f"Fetched student row: {student_row}")
-
-    # Transform student data to vector
+    
     student_vector = preprocess_student_data(student_row)
-
-    # Compute recommendations
+    
     course_scores = cosine_similarity(student_vector, course_matrix).flatten()
-    top_course_indices = np.argsort(course_scores)[-5:][::-1]  # Top 5 courses
     video_scores = cosine_similarity(student_vector, video_matrix).flatten()
-    top_video_indices = np.argsort(video_scores)[-5:][::-1]  # Top 5 videos
-
-    logging.debug(f"Top course indices: {top_course_indices}")
-    logging.debug(f"Top video indices: {top_video_indices}")
-
-    # Prepare recommendations response
+    
+    top_course_indices = np.argsort(course_scores)[-5:][::-1]
+    top_video_indices = np.argsort(video_scores)[-5:][::-1]
+    
     recommended_courses = [
-        {
-            "title": courses_df.iloc[i]["Title"],
-            "description": courses_df.iloc[i]["Description"],
-            "link": courses_df.iloc[i]["URLs"],
-            "thumbnail": courses_df.iloc[i].get("Images", "https://via.placeholder.com/300x180")
-        }
+        {"title": courses_df.iloc[i]["Title"], "description": courses_df.iloc[i]["Description"], "link": courses_df.iloc[i]["URLs"]}
         for i in top_course_indices
     ]
     recommended_videos = [
-        {
-            "title": videos_df.iloc[i]["Title"],
-            "description": videos_df.iloc[i]["Description"],
-            "link": videos_df.iloc[i]["URLs"],
-            "thumbnail": videos_df.iloc[i].get("Images", "https://via.placeholder.com/300x180")
-        }
+        {"title": videos_df.iloc[i]["Title"], "description": videos_df.iloc[i]["Description"], "link": videos_df.iloc[i]["URLs"]}
         for i in top_video_indices
     ]
-
-    # Log final recommendations
-    logging.debug(f"Recommended courses: {recommended_courses}")
-    logging.debug(f"Recommended videos: {recommended_videos}")
-
+    
     return jsonify({"courses": recommended_courses, "videos": recommended_videos})
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return jsonify({"message": "Logged out successfully"})
 
 if __name__ == '__main__':
     app.run(debug=True)
