@@ -10,7 +10,7 @@ function Recommendations() {
     try {
       const response = await fetch("http://localhost:5000/recommendations", {
         method: "POST",
-        credentials: "include",  // 🔥 Ensures cookies (session) are sent
+        credentials: "include", // Required for cookies
         headers: {
           "Content-Type": "application/json",
         },
