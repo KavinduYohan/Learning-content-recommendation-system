@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session, redirect, url_for
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import mysql.connector
 import pickle
@@ -9,21 +9,15 @@ import pandas as pd
 import logging
 from functools import wraps
 from flask_session import Session
-import os
-
-
-
+import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0755836572'  # Replace with a strong, unique key
 CORS(app, supports_credentials=True)
 
-
-
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"  # Stores session files on the server
 Session(app)  # Initialize session management
-
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -35,7 +29,6 @@ def get_db_connection():
         password="Kavindu1495?",
         database="learningContent3"
     )
-
 
 def login_required(f):
     @wraps(f)
@@ -84,8 +77,6 @@ def login():
     else:
         return jsonify({"message": "Invalid credentials!"}), 401
 
-
-
 @app.route('/submit-form', methods=['POST'])
 @login_required
 def submit_form():
@@ -132,12 +123,36 @@ def preprocess_student_data(student_row):
     student_preferences = " ".join(str(field) for field in student_row[6:12] if field)
     return tfidf_vectorizer.transform([student_preferences])
 
+def weighted_random_selection(indices, scores, n=5):
+    # Normalize scores to get probabilities
+    probabilities = scores[indices] / np.sum(scores[indices])
+    # Randomly select indices based on probabilities
+    selected_indices = np.random.choice(indices, size=n, replace=False, p=probabilities)
+    return selected_indices
+
 @app.route('/recommendations', methods=['POST'])
 @login_required
 def recommendations():
-    data = request.json
-    student_number = data.get('student_number')
+    # Get the logged-in user's ID from the session
+    user_id = session.get('user_id')
     
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+    
+    # Fetch the student_number associated with the logged-in user
+    db = get_db_connection()
+    cursor = db.cursor()
+    cursor.execute("SELECT student_number FROM students WHERE user_id = %s", (user_id,))
+    student_row = cursor.fetchone()
+    cursor.close()
+    db.close()
+    
+    if not student_row:
+        return jsonify({"error": "Student not found for the logged-in user"}), 404
+    
+    student_number = student_row[0]  # Extract the student_number
+    
+    # Fetch the student's data using the student_number
     db = get_db_connection()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM students WHERE student_number = %s", (student_number,))
@@ -146,23 +161,29 @@ def recommendations():
     db.close()
     
     if not student_row:
-        return jsonify({"error": "Student not found"}), 404
+        return jsonify({"error": "Student data not found"}), 404
     
+    # Generate recommendations
     student_vector = preprocess_student_data(student_row)
     
     course_scores = cosine_similarity(student_vector, course_matrix).flatten()
     video_scores = cosine_similarity(student_vector, video_matrix).flatten()
     
-    top_course_indices = np.argsort(course_scores)[-5:][::-1]
-    top_video_indices = np.argsort(video_scores)[-5:][::-1]
+    # Get top 10 indices for courses and videos
+    top_course_indices = np.argsort(course_scores)[-10:][::-1]
+    top_video_indices = np.argsort(video_scores)[-10:][::-1]
+    
+    # Use weighted random selection to pick 5 recommendations
+    selected_course_indices = weighted_random_selection(top_course_indices, course_scores)
+    selected_video_indices = weighted_random_selection(top_video_indices, video_scores)
     
     recommended_courses = [
         {"title": courses_df.iloc[i]["Title"], "description": courses_df.iloc[i]["Description"], "link": courses_df.iloc[i]["URLs"]}
-        for i in top_course_indices
+        for i in selected_course_indices
     ]
     recommended_videos = [
         {"title": videos_df.iloc[i]["Title"], "description": videos_df.iloc[i]["Description"], "link": videos_df.iloc[i]["URLs"]}
-        for i in top_video_indices
+        for i in selected_video_indices
     ]
     
     return jsonify({"courses": recommended_courses, "videos": recommended_videos})

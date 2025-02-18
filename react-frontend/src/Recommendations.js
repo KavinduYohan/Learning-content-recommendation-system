@@ -5,6 +5,7 @@ import "./Recommendations.css";
 function Recommendations() {
   const [studentNumber, setStudentNumber] = useState("");
   const [recommendations, setRecommendations] = useState({ courses: [], videos: [] });
+ 
 
   const fetchRecommendations = async () => {
     try {
