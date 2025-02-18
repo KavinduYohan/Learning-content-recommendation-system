@@ -23,25 +23,24 @@ function Recommendations() {
         const data = await response.json();
         console.log("Fetched recommendations:", data);
 
-        // Handle potential NaN values by sanitizing response
         const sanitizedData = {
           courses: data.courses.map(course => ({
-            title: course.title || "No Title Available",
-            description: course.description && course.description !== "NaN" 
-              ? course.description 
-              : "No description available",
-            link: course.link || "#",
-            thumbnail: course.thumbnail || "https://via.placeholder.com/300x180"
+              title: course.title || "No Title Available",
+              description: course.description && course.description !== "NaN"
+                  ? course.description
+                  : "No description available",
+              link: course.link || "#",
+              thumbnail: course.thumbnail || "https://via.placeholder.com/300x180"
           })),
           videos: data.videos.map(video => ({
-            title: video.title || "No Title Available",
-            description: video.description && video.description !== "NaN" 
-              ? video.description 
-              : "No description available",
-            link: video.link || "#",
-            thumbnail: video.thumbnail || "https://via.placeholder.com/300x180"
+              title: video.title || "No Title Available",
+              description: video.description && video.description !== "NaN"
+                  ? video.description
+                  : "No description available",
+              link: video.link || "#",
+              thumbnail: video.thumbnail || "https://via.placeholder.com/300x180"
           })),
-        };
+      };
 
         setRecommendations(sanitizedData);
       } else {
@@ -66,12 +65,12 @@ function Recommendations() {
 
       {/* Input Section */}
       <div className="student-input">
-        <input
+        {/* <input
           type="text"
           placeholder="Enter Student Number"
           value={studentNumber}
           onChange={(e) => setStudentNumber(e.target.value)}
-        />
+        /> */}
         <button onClick={fetchRecommendations}>Get Recommendations</button>
       </div>
 

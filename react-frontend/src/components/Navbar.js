@@ -14,7 +14,7 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <h1 className="navbar-logo">MyApp</h1>
+      <h1 className="navbar-logo">Recomandations WUSL</h1>
       <ul className="navbar-links">
         {isLoggedIn ? (
           <>

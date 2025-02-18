@@ -21,7 +21,7 @@ function Home() {
 </div>
 
       {/* About Section */}
-      <section className="about-section">
+      {/* <section className="about-section">
         <h2>Why Choose Us?</h2>
         <p>Our AI-powered recommendation system curates content tailored to your interests.</p>
         <div className="features">
@@ -38,7 +38,7 @@ function Home() {
             <p>Receive real-time updates and new recommendations.</p>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Section */}
       <footer className="contact-section">

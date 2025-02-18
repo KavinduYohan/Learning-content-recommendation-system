@@ -1,12 +1,12 @@
 .recommendations-container {
   padding: 20px;
-  width: 100vw; /* Full viewport width */
-  height: 100vh; /* Full viewport height */
-  margin: 0; /* Remove any default margin */
- 
-  box-sizing: border-box; /* Include padding in width/height calculation */
-  display: flex; /* Flexbox for alignment (if needed) */
-  flex-direction: column; /* Optional, arrange content vertically */
+  width: 100vw; 
+  height: 100vh;
+  margin: 0; 
+
+  box-sizing: border-box; 
+  display: flex; 
+  flex-direction: column;
 }
 
 .recommendations-title {
@@ -20,28 +20,28 @@
 
 .recommendations-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
-  gap: 20px; /* Space between items */
-  justify-content: center; /* Center align the grid */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px; 
+  justify-content: center; 
 }
 
 .recommendation-card {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Card shadow */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s; /* Smooth hover effects */
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .recommendation-card:hover {
-  transform: scale(1.03); /* Slight zoom on hover */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+  transform: scale(1.03);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); 
 }
 
 .recommendation-thumbnail {
   width: 100%;
-  height: 180px; /* Fixed height for thumbnails */
-  object-fit: cover; /* Ensure thumbnails cover the container */
+  height: 180px; 
+  object-fit: cover; 
 }
 
 .recommendation-content {
@@ -49,6 +49,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: 200px;
 }
 
 .recommendation-title {
@@ -86,13 +87,13 @@
   text-align: left;
 }
 
-/* Styles for Get Recommendations Section */
+
 .get-recommendations-container {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin-top: 30px;
+  margin-top: 10px;
   text-align: center;
 }
 

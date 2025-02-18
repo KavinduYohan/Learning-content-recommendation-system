@@ -17,7 +17,7 @@ CORS(app, supports_credentials=True)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"  # Stores session files on the server
-Session(app)  # Initialize session management
+Session(app)  
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -178,11 +178,22 @@ def recommendations():
     selected_video_indices = weighted_random_selection(top_video_indices, video_scores)
     
     recommended_courses = [
-        {"title": courses_df.iloc[i]["Title"], "description": courses_df.iloc[i]["Description"], "link": courses_df.iloc[i]["URLs"]}
+        {
+            "title": courses_df.iloc[i]["Title"],
+            "description": courses_df.iloc[i]["Description"] if str(courses_df.iloc[i]["Description"]) != "nan" else "No description available",
+            "link": courses_df.iloc[i]["URLs"],
+            "thumbnail": courses_df.iloc[i]["Images"] if pd.notna(courses_df.iloc[i]["Images"]) else "https://via.placeholder.com/300x180"
+        }
         for i in selected_course_indices
     ]
+    
     recommended_videos = [
-        {"title": videos_df.iloc[i]["Title"], "description": videos_df.iloc[i]["Description"], "link": videos_df.iloc[i]["URLs"]}
+        {
+            "title": videos_df.iloc[i]["Title"],
+            "description": videos_df.iloc[i]["Description"] if str(videos_df.iloc[i]["Description"]) != "nan" else "No description available",
+            "link": videos_df.iloc[i]["URLs"],
+            "thumbnail": videos_df.iloc[i]["Images"] if pd.notna(videos_df.iloc[i]["Images"]) else "https://via.placeholder.com/300x180"
+        }
         for i in selected_video_indices
     ]
     
