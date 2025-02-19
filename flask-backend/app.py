@@ -12,7 +12,7 @@ from flask_session import Session
 import random
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '0755836572'  # Replace with a strong, unique key
+app.config['SECRET_KEY'] = '123456'  # Replace with a strong, unique key
 CORS(app, supports_credentials=True)
 
 app.config["SESSION_PERMANENT"] = False
@@ -26,7 +26,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Kavindu1495?",
+        password="",
         database="learningContent3"
     )
 
