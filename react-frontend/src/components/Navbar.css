@@ -8,11 +8,11 @@
   padding: 10px 20px;
   position: fixed;
   top: 0;
-  left: 0; /* Ensure the navbar starts at the left corner */
+  left: 0; 
   width: 100%;
   z-index: 10;
-  box-sizing: border-box; /* Include padding in width calculations */
-  margin: 0; /* Remove any default margins */
+  box-sizing: border-box; 
+  margin: 0; 
 }
 .navbar-logo {
   font-size: 24px;

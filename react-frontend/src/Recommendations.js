@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Recommendations.css";
+import Navbar from "./components/Navbar";
 
 function Recommendations() {
   const [studentNumber, setStudentNumber] = useState("");
@@ -54,14 +55,7 @@ function Recommendations() {
   return (
     <div>
       {/* Navbar */}
-      <nav className="navbar">
-        <h1 className="navbar-logo">MyApp</h1>
-        <ul className="navbar-links">
-          <li><Link to="/home">Home</Link></li>
-          <li><Link to="/profile">Profile</Link></li>
-          <li><a href="/">Logout</a></li>
-        </ul>
-      </nav>
+      <Navbar />
 
       {/* Input Section */}
       <div className="student-input">
