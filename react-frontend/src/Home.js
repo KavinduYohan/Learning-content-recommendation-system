@@ -17,7 +17,7 @@ function Home() {
       </header>
       {/* Image Section */}
 <div className="hero-image">
-  <img src="https://media.gettyimages.com/id/1359662582/photo/group-of-happy-college-student-stock-photo.jpg?s=612x612&w=gi&k=20&c=J-xMDmX3zw3n5kQzAl9DbYKwTi0zAJAbF6-Mm_KAiig=" alt="Hero Section Image" />
+  <img src="https://cdn.vysokeskoly.cz/czech-universities/uploads/2020/08/czech_University_Students.jpg" alt="Hero Section Image" />
 </div>
 
       {/* About Section */}
