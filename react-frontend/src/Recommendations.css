@@ -111,7 +111,7 @@
 }
 
 .get-recommendations-button {
-  background-color: #0073e6;
+ 
   color: #fff;
   font-size: 1rem;
   font-weight: bold;
@@ -119,11 +119,20 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 300px;
+  
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.get-recommendations-button:hover {
-  background-color: #005bb5;
+
+.get-recommendations-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .student-input {
   width: 100%;

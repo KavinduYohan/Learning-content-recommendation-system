@@ -24,7 +24,7 @@ body, html {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   overflow: hidden;
-  margin-top: 900px;
+  margin-top: 1000px;
 }
 
 .profile-left {
@@ -173,4 +173,26 @@ textarea {
   .form-section h3 {
     font-size: 18px;
   }
+}
+
+.module-results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.module-results-grid div {
+  display: flex;
+  flex-direction: column;
+}
+
+.module-results-grid label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.module-results-grid select {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }

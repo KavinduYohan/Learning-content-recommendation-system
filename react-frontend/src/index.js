@@ -5,6 +5,7 @@ import App from "./App";
 import Home from "./Home";
 import Profile from "./Profile";
 import Recommendations from "./Recommendations";
+import Results from "./Results";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import Protected Route
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
@@ -18,6 +19,7 @@ root.render(
         <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
         <Route path="/recommendations" element={<ProtectedRoute element={<Recommendations />} />} />
+        <Route path="/results" element={<ProtectedRoute element={<Results />} />} />
       </Routes>
     </Router>
   </React.StrictMode>

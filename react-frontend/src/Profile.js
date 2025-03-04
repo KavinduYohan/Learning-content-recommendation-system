@@ -208,6 +208,7 @@ function Profile() {
           </form>
           {message && <p className="submission-message">{message}</p>}
         </div>
+        +
       </div>
     </div>
   );

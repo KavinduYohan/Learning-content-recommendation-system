@@ -58,14 +58,15 @@ function Recommendations() {
       <Navbar />
 
       {/* Input Section */}
-      <div className="student-input">
+      
+      {/* Recommendations */}
+      <div className="recommendations-container">
+        <h1 className="recommendations-title">Recommendations</h1>
+        <div className="get-recommendations-button">
         
         <button onClick={fetchRecommendations}>Get Recommendations</button>
       </div>
 
-      {/* Recommendations */}
-      <div className="recommendations-container">
-        <h1 className="recommendations-title">Recommendations</h1>
 
         {/* Courses */}
         <h2 className="section-title">Courses</h2>

@@ -11,21 +11,34 @@ function Home() {
       <header className="home-header">
         <div className="hero-content">
           <h1>Discover Your Next Best Experience</h1>
-          
           <p>Personalized Recommendations Just for You</p>
           <button className="cta-button">Get Started</button>
         </div>
       </header>
-      
-              {/* Image Slider Section */}
-      <div className="image-slider">
-        <div className="slider-container">
-          <img src="https://cdn.vysokeskoly.cz/czech-universities/uploads/2020/08/czech_University_Students.jpg" alt="Image 1" />
-          <img src="https://www.shutterstock.com/image-photo/walking-happy-girl-friends-university-600nw-2477767447.jpg" alt="Image 2" />
-          <img src="https://cdn.vysokeskoly.cz/czech-universities/uploads/2020/08/czech_University_Students.jpg" alt="Image 3" />
-          <img src="https://t3.ftcdn.net/jpg/03/88/97/92/360_F_388979227_lKgqMJPO5ExItAuN4tuwyPeiknwrR7t2.jpg" alt="Image 4" />
+      {/* Image Section */}
+<div className="hero-image">
+  <img src="https://cdn.vysokeskoly.cz/czech-universities/uploads/2020/08/czech_University_Students.jpg" alt="Hero Section Image" />
+</div>
+
+      {/* About Section */}
+      {/* <section className="about-section">
+        <h2>Why Choose Us?</h2>
+        <p>Our AI-powered recommendation system curates content tailored to your interests.</p>
+        <div className="features">
+          <div className="feature">
+            <h3>Smart Suggestions</h3>
+            <p>Highly accurate recommendations based on your preferences.</p>
+          </div>
+          <div className="feature">
+            <h3>Save Time</h3>
+            <p>Find what you need quickly without endless searching.</p>
+          </div>
+          <div className="feature">
+            <h3>Stay Updated</h3>
+            <p>Receive real-time updates and new recommendations.</p>
+          </div>
         </div>
-      </div>
+      </section> */}
 
       {/* Contact Section */}
       <footer className="contact-section">
