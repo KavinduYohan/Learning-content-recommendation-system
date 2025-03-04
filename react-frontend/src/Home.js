@@ -17,7 +17,7 @@ function Home() {
         
         {/* Hero Image */}
         <div className="hero-image">
-          <img src="/api/placeholder/800/500" alt="Students collaborating on campus" />
+          <img src="https://images.unsplash.com/photo-1524069290683-0457abfe42c3?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c2Nob29sJTIwc3R1ZGVudHxlbnwwfHwwfHx8MA%3D%3D" alt="Students collaborating on campus" />
         </div>
       </header>
 
@@ -32,21 +32,11 @@ function Home() {
             <p>Discover courses aligned with your academic goals, learning style, and career aspirations.</p>
           </div>
 
-          <div className="feature-card">
-            <div className="feature-icon">🔍</div>
-            <h3>Research Opportunities</h3>
-            <p>Get matched with research projects and faculty based on your interests and strengths.</p>
-          </div>
-
-          <div className="feature-card">
-            <div className="feature-icon">📅</div>
-            <h3>Optimized Study Schedule</h3>
-            <p>AI-generated study plans that adapt to your learning patterns and course workload.</p>
-          </div>
+        
 
           <div className="feature-card">
             <div className="feature-icon">🌐</div>
-            <h3>Resource Discovery</h3>
+            <h3>Personalized Video Recommendations</h3>
             <p>Find relevant textbooks, articles, and supplementary materials tailored to your courses.</p>
           </div>
         </div>
@@ -103,25 +93,6 @@ function Home() {
             <p className="testimonial-author">- Sophia R., Biochemistry</p>
           </div>
         </div>
-      </section>
-
-      {/* Partner Universities Section */}
-      <section className="partner-universities">
-        <h2>Partner Universities</h2>
-        <div className="university-logos">
-          <div className="university-logo">University A</div>
-          <div className="university-logo">University B</div>
-          <div className="university-logo">University C</div>
-          <div className="university-logo">University D</div>
-          <div className="university-logo">University E</div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="cta-section">
-        <h2>Ready to Transform Your Academic Journey?</h2>
-        <p>Join thousands of students who have enhanced their university experience with our AI recommendation system.</p>
-        <button className="cta-button large">Get Started Today</button>
       </section>
 
       {/* Footer */}

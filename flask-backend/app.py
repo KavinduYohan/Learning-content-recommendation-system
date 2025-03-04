@@ -73,6 +73,7 @@ def login():
     
     if user:
         session['user_id'] = user[0]
+        app.logger.debug(f"User {username} logged in with user_id: {user[0]}")  # Debugging statement
         return jsonify({"message": "Login successful!", "user_id": user[0]})
     else:
         return jsonify({"message": "Invalid credentials!"}), 401
@@ -256,6 +257,95 @@ def recommendations():
     ]
     
     return jsonify({"courses": recommended_courses, "videos": recommended_videos})
+
+
+@app.route('/submit-results', methods=['POST'])
+@login_required
+def submit_results():
+    data = request.json
+    user_id = session.get('user_id')  # Retrieve user_id from the session
+    app.logger.debug(f"Retrieved user_id from session: {user_id}")  # Debugging statement
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        
+        # Check if the user already has results
+        cursor.execute("SELECT * FROM results WHERE user_id = %s", (user_id,))
+        existing_results = cursor.fetchone()
+
+        if existing_results:
+            # Update existing results
+            sql = """
+            UPDATE results SET
+                programming_fundamentals = %s,
+                data_structures_and_algorithms = %s,
+                operating_systems = %s,
+                database_systems = %s,
+                object_oriented_programming = %s,
+                advanced_software_engineering = %s,
+                artificial_intelligence = %s,
+                network_security = %s,
+                basic_electronics = %s,
+                circuit_analysis = %s,
+                microprocessor_systems = %s,
+                digital_electronics = %s,
+                embedded_systems_design = %s,
+                power_electronics = %s,
+                foundations_of_industrial_management = %s,
+                operations_management = %s,
+                strategic_management = %s,
+                linear_algebra = %s,
+                numerical_methods = %s,
+                optimization_techniques = %s,
+                introduction_to_probability_and_statistics = %s,
+                statistical_inference = %s,
+                time_series_analysis = %s
+            WHERE user_id = %s
+            """
+            values = (
+                data['programming_fundamentals'], data['data_structures_and_algorithms'], data['operating_systems'],
+                data['database_systems'], data['object_oriented_programming'], data['advanced_software_engineering'],
+                data['artificial_intelligence'], data['network_security'], data['basic_electronics'],
+                data['circuit_analysis'], data['microprocessor_systems'], data['digital_electronics'],
+                data['embedded_systems_design'], data['power_electronics'], data['foundations_of_industrial_management'],
+                data['operations_management'], data['strategic_management'], data['linear_algebra'],
+                data['numerical_methods'], data['optimization_techniques'], data['introduction_to_probability_and_statistics'],
+                data['statistical_inference'], data['time_series_analysis'], user_id
+            )
+        else:
+            # Insert new results
+            sql = """
+            INSERT INTO results (user_id, programming_fundamentals, data_structures_and_algorithms, operating_systems, 
+                database_systems, object_oriented_programming, advanced_software_engineering, artificial_intelligence, 
+                network_security, basic_electronics, circuit_analysis, microprocessor_systems, digital_electronics, 
+                embedded_systems_design, power_electronics, foundations_of_industrial_management, operations_management, 
+                strategic_management, linear_algebra, numerical_methods, optimization_techniques, 
+                introduction_to_probability_and_statistics, statistical_inference, time_series_analysis) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (
+                user_id, data['programming_fundamentals'], data['data_structures_and_algorithms'], data['operating_systems'],
+                data['database_systems'], data['object_oriented_programming'], data['advanced_software_engineering'],
+                data['artificial_intelligence'], data['network_security'], data['basic_electronics'],
+                data['circuit_analysis'], data['microprocessor_systems'], data['digital_electronics'],
+                data['embedded_systems_design'], data['power_electronics'], data['foundations_of_industrial_management'],
+                data['operations_management'], data['strategic_management'], data['linear_algebra'],
+                data['numerical_methods'], data['optimization_techniques'], data['introduction_to_probability_and_statistics'],
+                data['statistical_inference'], data['time_series_analysis']
+            )
+
+        cursor.execute(sql, values)
+        db.commit()
+        return jsonify({'message': 'Results submitted successfully'})
+    except Exception as e:
+        app.logger.error(f"Error submitting results: {str(e)}")  # Debugging statement
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
 
 @app.route('/logout')
 def logout():

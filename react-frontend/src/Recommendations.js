@@ -64,7 +64,7 @@ function Recommendations() {
         <h1 className="recommendations-title">Recommendations</h1>
         <div className="get-recommendations-button">
         
-        <button onClick={fetchRecommendations}>Get Recommendations</button>
+        <button className="get-recommendations-button " onClick={fetchRecommendations}>Get Recommendations</button>
       </div>
 
 

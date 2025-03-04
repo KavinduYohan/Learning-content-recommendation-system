@@ -46,7 +46,7 @@ select:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle glow effect */
 }
 
-button {
+.buttonr {
   display: block;
   width: 100%;
   max-width: 200px; /* Limit button width */

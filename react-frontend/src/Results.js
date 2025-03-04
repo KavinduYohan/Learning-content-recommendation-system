@@ -31,15 +31,16 @@ const Results = () => {
     });
 
     const [studentId, setStudentId] = useState(null);
-
     useEffect(() => {
-        // Fetch the student ID from the session or local storage
-        const user_id = sessionStorage.getItem('user_id');
+        const user_id = localStorage.getItem('user_id');
+        console.log('Retrieved user_id:', user_id); // Debugging statement
         if (user_id) {
             setStudentId(user_id);
+        } else {
+            console.error('User ID not found in localStorage');
         }
     }, []);
-
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setResults(prevState => ({
@@ -50,15 +51,16 @@ const Results = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('Submitting results with studentId:', studentId); // Debugging statement
         if (!studentId) {
             alert("Student ID not found!");
             return;
         }
-
+    
         try {
-            const response = await axios.post('http://localhost:5000/api/results', {
-                student_id: studentId,
-                ...results
+            const response = await axios.post('http://localhost:5000/submit-results', {
+                ...results,
+                user_id: studentId // Include the student ID in the request
             });
             alert('Results submitted successfully!');
             console.log(response.data);
@@ -330,7 +332,7 @@ const Results = () => {
                         </select>
                     </label>
 
-                    <button type="submit">Submit Results</button>
+                    <button className="buttonr" type="submit">Submit Results</button>
                 </form>
             </div>
         </div>

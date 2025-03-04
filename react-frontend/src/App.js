@@ -34,28 +34,27 @@ function App() {
 
   const handleLogin = async () => {
     if (!formData.username || !formData.password) {
-      setMessage("Please enter a username and password.");
-      return;
+        setMessage("Please enter a username and password.");
+        return;
     }
 
     try {
-      setMessage("");
-      const res = await axios.post("http://localhost:5000/login", formData);
-      console.log("Login API Response:", res.data);
+        setMessage("");
+        const res = await axios.post("http://localhost:5000/login", formData);
+        console.log("Login API Response:", res.data);
 
-      if (res.data.user_id) {
-        localStorage.setItem("user_id", res.data.user_id);
-        localStorage.setItem("username", formData.username);
-        navigate("/home");
-      } else {
-        setMessage("Invalid credentials!");
-      }
+        if (res.data.user_id) {
+            localStorage.setItem("user_id", res.data.user_id); // Storing in localStorage
+            localStorage.setItem("username", formData.username);
+            navigate("/home");
+        } else {
+            setMessage("Invalid credentials!");
+        }
     } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      setMessage(err.response?.data?.message || "Error logging in.");
+        console.error("Login error:", err.response?.data || err.message);
+        setMessage(err.response?.data?.message || "Error logging in.");
     }
-  };
-
+};
   return (
     <div className="login-background">
       <div className="container">
