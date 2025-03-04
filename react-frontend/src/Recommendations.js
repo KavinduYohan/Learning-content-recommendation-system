@@ -31,7 +31,7 @@ function Recommendations() {
                   ? course.description
                   : "No description available",
               link: course.link || "#",
-              thumbnail: course.thumbnail || "https://via.placeholder.com/300x180"
+              thumbnail: "course.thumbnail" || "https://via.placeholder.com/300x180"
           })),
           videos: data.videos.map(video => ({
               title: video.title || "No Title Available",

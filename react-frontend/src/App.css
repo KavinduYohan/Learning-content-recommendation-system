@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(to right, #34e89e, #0f3443); /* Updated gradient for consistency */
+  background: linear-gradient(to right, #34e89e, #0f3443);
   color: #fff;
   height: 100vh;
   display: flex;
@@ -12,21 +12,27 @@ body {
 .container {
   width: 100%;
   max-width: 400px;
-  background: #fff; /* White box retained for container contrast */
+  background: #fff;
   color: #333;
-  padding: 20px;
-  border-radius: 10px;
+  padding: 30px;
+  border-radius: 15px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
 
-.container h1 {
-  font-size: 26px;
-  margin-bottom: 20px;
+.header h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
   color: #333;
 }
 
-.container input {
+.header p {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.form input {
   width: calc(100% - 20px);
   padding: 12px;
   margin: 10px 0;
@@ -35,17 +41,17 @@ body {
   font-size: 16px;
 }
 
-.container input:focus {
+.form input:focus {
   outline: none;
-  border-color: #34e89e; /* Updated focus color for consistency */
-  box-shadow: 0 0 8px rgba(52, 232, 158, 0.2); /* Soft green glow */
+  border-color: #34e89e;
+  box-shadow: 0 0 8px rgba(52, 232, 158, 0.2);
 }
 
-.container button {
-  width: calc(50% - 10px);
+.form button {
+  width: 100%;
   padding: 12px;
-  margin: 10px 5px;
-  background: #34e89e; /* Updated button gradient */
+  margin: 10px 0;
+  background: #34e89e;
   color: white;
   border: none;
   border-radius: 5px;
@@ -54,12 +60,29 @@ body {
   transition: all 0.3s ease;
 }
 
-.container button:hover {
-  background: #0f3443; /* Darker hover effect for buttons */
+.form button:hover {
+  background: #0f3443;
 }
 
-.container p {
+.message {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #ff4444;
+}
+
+.footer p {
   margin-top: 20px;
   font-size: 14px;
   color: #555;
+}
+
+.footer span {
+  color: #34e89e;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.footer span:hover {
+  color: #0f3443;
 }

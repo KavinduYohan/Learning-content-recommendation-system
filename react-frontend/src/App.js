@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./App.css";
 
-axios.defaults.withCredentials = true; // ✅ Ensure cookies are sent with requests
+axios.defaults.withCredentials = true; // Ensure cookies are sent with requests
 
 function App() {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
+  const [isSignup, setIsSignup] = useState(false); // Toggle between login and signup
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,6 +25,7 @@ function App() {
       setMessage(""); // Clear previous message
       const res = await axios.post("http://localhost:5000/signup", formData);
       setMessage(res.data.message);
+      setIsSignup(false); // Switch back to login after successful signup
     } catch (err) {
       console.error("Signup error:", err.response?.data || err.message);
       setMessage(err.response?.data?.message || "Error signing up.");
@@ -56,24 +58,44 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Login & Signup</h1>
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={formData.username}
-        onChange={handleChange}
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-      />
-      <button onClick={handleSignup}>Sign Up</button>
-      <button onClick={handleLogin}>Login</button>
-      {message && <p className="message">{message}</p>}
+      <div className="header">
+        <h1>{isSignup ? "Create an Account" : "Welcome Back!"}</h1>
+        <p>
+          {isSignup
+            ? "Join us to get started."
+            : "Log in to access your account."}
+        </p>
+      </div>
+      <div className="form">
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={formData.username}
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+        />
+        {isSignup ? (
+          <button onClick={handleSignup}>Sign Up</button>
+        ) : (
+          <button onClick={handleLogin}>Login</button>
+        )}
+        {message && <p className="message">{message}</p>}
+      </div>
+      <div className="footer">
+        <p>
+          {isSignup ? "Already have an account? " : "Don't have an account? "}
+          <span onClick={() => setIsSignup(!isSignup)}>
+            {isSignup ? "Log In" : "Sign Up"}
+          </span>
+        </p>
+      </div>
     </div>
   );
 }

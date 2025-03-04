@@ -76,31 +76,89 @@ def login():
         return jsonify({"message": "Login successful!", "user_id": user[0]})
     else:
         return jsonify({"message": "Invalid credentials!"}), 401
+    
+@app.route('/get-user-data', methods=['GET'])
+@login_required
+def get_user_data():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM students WHERE user_id = %s", (user_id,))
+    user_data = cursor.fetchone()
+    cursor.close()
+    db.close()
+
+    if not user_data:
+        return jsonify({"error": "User data not found"}), 404
+
+    return jsonify(user_data)
+
 
 @app.route('/submit-form', methods=['POST'])
 @login_required
 def submit_form():
     data = request.json
-    print("Received Data:", data)
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+
     required_fields = ['user_id', 'student_number', 'first_name', 'last_name', 'level', 'program']
     if not all(data.get(field) for field in required_fields):
         return jsonify({'error': 'Missing required fields'}), 400
-    
+
     try:
         db = get_db_connection()
         cursor = db.cursor()
-        sql = """
-        INSERT INTO students (user_id, student_number, first_name, last_name, level, program, 
-            preferred_learning_method, preferred_study_time, preferred_language, challenging_subject_areas, 
-            preferred_content_platforms, topics_of_interest, future_goals, challenges, suggestions) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-        values = (
-            data['user_id'], data['student_number'], data['first_name'], data['last_name'], data['level'], data['program'],
-            ','.join(data.get('preferred_learning_methods', [])), ','.join(data.get('preferred_study_times', [])),
-            ','.join(data.get('preferred_languages', [])), ','.join(data.get('challenging_subject_areas', [])),
-            ','.join(data.get('preferred_content_platforms', [])), ','.join(data.get('topics_of_interest', [])),
-            data.get('future_goals'), data.get('challenges'), data.get('suggestions')
-        )
+        # Check if the user already exists
+        cursor.execute("SELECT * FROM students WHERE user_id = %s", (user_id,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            # Update existing user
+            sql = """
+            UPDATE students SET
+                student_number = %s,
+                first_name = %s,
+                last_name = %s,
+                level = %s,
+                program = %s,
+                preferred_learning_method = %s,
+                preferred_study_time = %s,
+                preferred_language = %s,
+                challenging_subject_areas = %s,
+                preferred_content_platforms = %s,
+                topics_of_interest = %s,
+                future_goals = %s,
+                challenges = %s,
+                suggestions = %s
+            WHERE user_id = %s
+            """
+            values = (
+                data['student_number'], data['first_name'], data['last_name'], data['level'], data['program'],
+                ','.join(data.get('preferred_learning_methods', [])), ','.join(data.get('preferred_study_times', [])),
+                ','.join(data.get('preferred_languages', [])), ','.join(data.get('challenging_subject_areas', [])),
+                ','.join(data.get('preferred_content_platforms', [])), ','.join(data.get('topics_of_interest', [])),
+                data.get('future_goals'), data.get('challenges'), data.get('suggestions'), user_id
+            )
+        else:
+            # Insert new user
+            sql = """
+            INSERT INTO students (user_id, student_number, first_name, last_name, level, program, 
+                preferred_learning_method, preferred_study_time, preferred_language, challenging_subject_areas, 
+                preferred_content_platforms, topics_of_interest, future_goals, challenges, suggestions) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (
+                user_id, data['student_number'], data['first_name'], data['last_name'], data['level'], data['program'],
+                ','.join(data.get('preferred_learning_methods', [])), ','.join(data.get('preferred_study_times', [])),
+                ','.join(data.get('preferred_languages', [])), ','.join(data.get('challenging_subject_areas', [])),
+                ','.join(data.get('preferred_content_platforms', [])), ','.join(data.get('topics_of_interest', [])),
+                data.get('future_goals'), data.get('challenges'), data.get('suggestions')
+            )
+
         cursor.execute(sql, values)
         db.commit()
         return jsonify({'message': 'Form submitted successfully'})

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Profile.css';
 import Navbar from "./components/Navbar";
@@ -25,6 +25,7 @@ function Profile() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
   const levels = [1, 2, 3, 4];
   const programs = [
@@ -49,6 +50,37 @@ function Profile() {
     'Artificial Intelligence', 'Data Science', 'Cybersecurity'
   ];
 
+  // Fetch user data when the component mounts or when editing starts
+  useEffect(() => {
+    if (isEditing) {
+      fetchUserData();
+    }
+  }, [isEditing]);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/get-user-data', {
+        credentials: 'include', // Include cookies for session-based authentication
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setStudentDetails({
+          ...data,
+          preferred_learning_methods: data.preferred_learning_methods ? data.preferred_learning_methods.split(',') : [],
+          preferred_study_times: data.preferred_study_times ? data.preferred_study_times.split(',') : [],
+          preferred_languages: data.preferred_languages ? data.preferred_languages.split(',') : [],
+          challenging_subject_areas: data.challenging_subject_areas ? data.challenging_subject_areas.split(',') : [],
+          preferred_content_platforms: data.preferred_content_platforms ? data.preferred_content_platforms.split(',') : [],
+          topics_of_interest: data.topics_of_interest ? data.topics_of_interest.split(',') : [],
+        });
+      } else {
+        setMessage('Failed to fetch user data.');
+      }
+    } catch (error) {
+      setMessage('An error occurred while fetching user data.');
+    }
+  };
+
   const handleMultiSelectChange = (selectedOptions, field) => {
     const values = selectedOptions ? selectedOptions.map(option => option.value) : [];
     setStudentDetails(prev => ({ ...prev, [field]: values }));
@@ -71,12 +103,13 @@ function Profile() {
       const response = await fetch('http://localhost:5000/submit-form', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Important for session-based authentication
+        credentials: 'include', // Include cookies for session-based authentication
         body: JSON.stringify(studentDetails),
       });
       
       if (response.ok) {
         setMessage('Form submitted successfully!');
+        setIsEditing(false); // Exit edit mode after saving
       } else {
         setMessage('Error submitting the form.');
       }
@@ -166,19 +199,18 @@ function Profile() {
               <textarea placeholder="Suggestions" value={studentDetails.suggestions} onChange={(e) => handleInputChange(e, 'suggestions')} />
             </section>
 
-            <button type="submit" className="save-button" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Save'}
-            </button>
+            <div className="button-group">
+              <button type="button" className="edit-button" onClick={() => setIsEditing(true)}>
+                Edit
+              </button>
+              <button type="submit" className="save-button" disabled={isSubmitting || !isEditing}>
+                {isSubmitting ? 'Submitting...' : 'Save'}
+              </button>
+            </div>
           </form>
           {message && <p className="submission-message">{message}</p>}
         </div>
-        {/* <Link to="/recommendations">
-  <button className="recommendation-button">
-    Go to Recommendation Page
-  </button>
-</Link> */}
       </div>
-      
     </div>
   );
 }
