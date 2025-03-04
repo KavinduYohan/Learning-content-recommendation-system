@@ -101,11 +101,11 @@ def get_user_data():
 @login_required
 def submit_form():
     data = request.json
-    user_id = session.get('user_id')
+    user_id = session.get('user_id')  # Retrieve user_id from the session
     if not user_id:
         return jsonify({"error": "User not logged in"}), 401
 
-    required_fields = ['user_id', 'student_number', 'first_name', 'last_name', 'level', 'program']
+    required_fields = ['student_number', 'first_name', 'last_name', 'level', 'program']
     if not all(data.get(field) for field in required_fields):
         return jsonify({'error': 'Missing required fields'}), 400
 

@@ -59,12 +59,7 @@ function Recommendations() {
 
       {/* Input Section */}
       <div className="student-input">
-        {/* <input
-          type="text"
-          placeholder="Enter Student Number"
-          value={studentNumber}
-          onChange={(e) => setStudentNumber(e.target.value)}
-        /> */}
+        
         <button onClick={fetchRecommendations}>Get Recommendations</button>
       </div>
 

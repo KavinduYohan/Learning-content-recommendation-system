@@ -70,7 +70,7 @@ function App() {
         <input
           type="text"
           name="username"
-          placeholder="Username"
+          placeholder="Email"
           value={formData.username}
           onChange={handleChange}
         />

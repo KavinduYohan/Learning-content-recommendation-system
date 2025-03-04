@@ -6,7 +6,6 @@ import Select from 'react-select';
 
 function Profile() {
   const [studentDetails, setStudentDetails] = useState({
-    user_id: '',
     student_number: '',
     first_name: '',
     last_name: '',
@@ -141,7 +140,6 @@ function Profile() {
           <form className="form-container" onSubmit={handleSubmit}>
             <section className="form-section">
               <h3>Personal Details</h3>
-              <input type="text" placeholder="User ID" value={studentDetails.user_id} onChange={(e) => handleInputChange(e, 'user_id')} required />
               <input type="text" placeholder="Student Number" value={studentDetails.student_number} onChange={(e) => handleInputChange(e, 'student_number')} required />
               <input type="text" placeholder="First Name" value={studentDetails.first_name} onChange={(e) => handleInputChange(e, 'first_name')} required />
               <input type="text" placeholder="Last Name" value={studentDetails.last_name} onChange={(e) => handleInputChange(e, 'last_name')} required />
