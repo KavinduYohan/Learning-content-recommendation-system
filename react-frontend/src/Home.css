@@ -123,3 +123,65 @@ body {
 .social-link:hover {
   text-decoration: underline;
 }
+
+/* Image Slider Section */
+.image-slider {
+  width: 100%;
+  max-width: 1000px; /* Adjust the width of the container */
+  height: 500px; /* Adjust the height of the container */
+  overflow: hidden;
+  position: relative;
+  margin: 20px auto; /* Center the container */
+  border: 2px solid #ccc; /* Optional: Add a border */
+  border-radius: 10px; /* Optional: Add rounded corners */
+}
+
+.slider-container {
+  display: flex;
+  width: 400%; /* Adjust based on the number of images (100% × number of images) */
+  height: 100%; /* Ensure the container takes full height */
+  animation: slide 32s infinite; /* Adjust timing as needed */
+}
+
+.slider-container img {
+  width: 1000px; /* Each image takes 100% of the container's width */
+  height: 100%; /* Ensure images take full height of the container */
+  object-fit: cover; /* Fill the container, cropping edges if necessary */
+  flex-shrink: 0;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  16.66% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-100%);
+  }
+  36.66% {
+    transform: translateX(-100%);
+  }
+  40% {
+    transform: translateX(-200%);
+  }
+  56.66% {
+    transform: translateX(-200%);
+  }
+  60% {
+    transform: translateX(-300%);
+  }
+  76.66% {
+    transform: translateX(-300%);
+  }
+  80% {
+    transform: translateX(-400%);
+  }
+  96.66% {
+    transform: translateX(-400%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

@@ -172,11 +172,11 @@ function Profile() {
           </form>
           {message && <p className="submission-message">{message}</p>}
         </div>
-        <Link to="/recommendations">
+        {/* <Link to="/recommendations">
   <button className="recommendation-button">
     Go to Recommendation Page
   </button>
-</Link>
+</Link> */}
       </div>
       
     </div>
