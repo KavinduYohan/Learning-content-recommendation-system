@@ -17,7 +17,8 @@ function Home() {
         
         {/* Hero Image */}
         <div className="hero-image">
-          <img src="https://images.unsplash.com/photo-1524069290683-0457abfe42c3?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c2Nob29sJTIwc3R1ZGVudHxlbnwwfHwwfHx8MA%3D%3D" alt="Students collaborating on campus" />
+        <img src="/images/teamwork-designers.jpg" alt="Students collaborating on campus" />
+
         </div>
       </header>
 
@@ -80,17 +81,11 @@ function Home() {
         <div className="testimonial-grid">
           <div className="testimonial-card">
             <p>"The course recommendations were spot-on! I discovered classes I never would have considered that ended up being perfect for my career goals."</p>
-            <p className="testimonial-author">- Emma J., Computer Science</p>
+            <p className="testimonial-author">- Kavindu Yohan</p>
           </div>
-          
           <div className="testimonial-card">
-            <p>"The study schedule optimization helped me balance my coursework with my part-time job. My grades improved significantly!"</p>
-            <p className="testimonial-author">- Michael T., Business Administration</p>
-          </div>
-          
-          <div className="testimonial-card">
-            <p>"I was connected to a research opportunity that perfectly matched my interests. Now I'm working with a professor whose work I've always admired."</p>
-            <p className="testimonial-author">- Sophia R., Biochemistry</p>
+            <p>"The Video recommendations were spot-on! I discovered classes I never would have considered that ended up being perfect for my career goals."</p>
+            <p className="testimonial-author">- Kamal Silva</p>
           </div>
         </div>
       </section>
@@ -100,9 +95,9 @@ function Home() {
         <h2>Contact Us</h2>
         <p>Have questions about how our AI recommendation system can enhance your university experience?</p>
         <div className="contact-info">
-          <p>Email: <a href="mailto:info@eduai-recommender.com">info@eduai-recommender.com</a></p>
-          <p>Phone: <a href="tel:+123456789">+123-456-789</a></p>
-          <p>Address: Campus Innovation Center, University Square, Academic City</p>
+          <p>Web: <a href="https://www.wyb.ac.lk/">https://www.wyb.ac.lk/</a></p>
+          <p>Phone: <a href="tel:+123456789">0772116334</a></p>
+          <p>Wayamba University of Sri Lanka</p>
         </div>
         <div className="social-links">
           <a href="#facebook" className="social-link">Facebook</a>
@@ -111,7 +106,7 @@ function Home() {
           <a href="#instagram" className="social-link">Instagram</a>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2025 EduAI Recommender. All rights reserved.</p>
+          <p>&copy; Personalized Learning Path Recomandations</p>
         </div>
       </footer>
     </div>
