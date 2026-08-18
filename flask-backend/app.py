@@ -1,33 +1,45 @@
+import os
+import logging
+import random
+import pickle
+from functools import wraps
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-import mysql.connector
-import pickle
+from flask_session import Session
+import psycopg2
+from psycopg2 import IntegrityError
+from psycopg2.extras import RealDictCursor
 import numpy as np
+import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
-import pandas as pd
-import logging
-from functools import wraps
-from flask_session import Session
-import random
+from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '123456'  # Replace with a strong, unique key
-CORS(app, supports_credentials=True)
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'default-dev-secret-key-change-in-env')
+
+# Restrict CORS to authorized frontend origin
+frontend_origin = os.getenv('FRONTEND_ORIGIN', 'http://localhost:3000')
+CORS(app, origins=[frontend_origin], supports_credentials=True)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"  # Stores session files on the server
 Session(app)  
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 def get_db_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Kavindu1495?",
-        database="learningContent3"
+    return psycopg2.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        port=int(os.getenv("DB_PORT", 5432)),
+        user=os.getenv("DB_USER", "postgres"),
+        password=os.getenv("DB_PASSWORD", ""),
+        dbname=os.getenv("DB_NAME", "learningContent3")
     )
 
 def login_required(f):
@@ -40,43 +52,76 @@ def login_required(f):
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    data = request.json
+    data = request.json or {}
     username = data.get('username')
     password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"message": "Username and password are required."}), 400
+    
+    try:
+        hashed_password = generate_password_hash(password)
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed_password))
+        db.commit()
+        return jsonify({"message": "User signed up successfully!"})
+    except IntegrityError:
+        return jsonify({"message": "Username already exists."}), 400
+    except Exception as e:
+        app.logger.error(f"Error during signup: {e}")
+        return jsonify({"message": "An error occurred during signup."}), 500
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
+        if 'db' in locals() and db:
+            db.close()
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json or {}
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"message": "Username and password are required."}), 400
     
     try:
         db = get_db_connection()
         cursor = db.cursor()
-        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
-        db.commit()
-        return jsonify({"message": "User signed up successfully!"})
-    except mysql.connector.IntegrityError:
-        return jsonify({"message": "Username already exists."}), 400
-    except Exception as e:
-        return jsonify({"message": "An error occurred.", "error": str(e)}), 500
-    finally:
-        cursor.close()
-        db.close()
+        cursor.execute("SELECT id, username, password FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
 
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.json
-    username = data.get('username')
-    password = data.get('password')
-    
-    db = get_db_connection()
-    cursor = db.cursor()
-    cursor.execute("SELECT id, username FROM users WHERE username = %s AND password = %s", (username, password))
-    user = cursor.fetchone()
-    cursor.close()
-    db.close()
-    
-    if user:
-        session['user_id'] = user[0]
-        app.logger.debug(f"User {username} logged in with user_id: {user[0]}")  # Debugging statement
-        return jsonify({"message": "Login successful!", "user_id": user[0]})
-    else:
+        if user:
+            user_id, uname, stored_password = user
+            is_valid = False
+            # Check hashed password or legacy plaintext password fallback
+            if stored_password.startswith(('scrypt:', 'pbkdf2:', 'argon2:')):
+                is_valid = check_password_hash(stored_password, password)
+            elif stored_password == password:
+                is_valid = True
+                # Migrate plaintext password to hashed format
+                try:
+                    new_hash = generate_password_hash(password)
+                    cursor.execute("UPDATE users SET password = %s WHERE id = %s", (new_hash, user_id))
+                    db.commit()
+                except Exception as migration_err:
+                    app.logger.warning(f"Password hash upgrade failed for user {user_id}: {migration_err}")
+
+            if is_valid:
+                session['user_id'] = user_id
+                app.logger.info(f"User {username} logged in successfully with user_id: {user_id}")
+                return jsonify({"message": "Login successful!", "user_id": user_id})
+        
         return jsonify({"message": "Invalid credentials!"}), 401
+    except Exception as e:
+        app.logger.error(f"Error during login: {e}")
+        return jsonify({"message": "An error occurred during login."}), 500
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
+        if 'db' in locals() and db:
+            db.close()
     
 @app.route('/get-user-data', methods=['GET'])
 @login_required
@@ -86,7 +131,7 @@ def get_user_data():
         return jsonify({"error": "User not logged in"}), 401
 
     db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor(cursor_factory=RealDictCursor)
     cursor.execute("SELECT * FROM students WHERE user_id = %s", (user_id,))
     user_data = cursor.fetchone()
     cursor.close()
@@ -95,7 +140,7 @@ def get_user_data():
     if not user_data:
         return jsonify({"error": "User data not found"}), 404
 
-    return jsonify(user_data)
+    return jsonify(dict(user_data))
 
 
 @app.route('/submit-form', methods=['POST'])
@@ -353,4 +398,6 @@ def logout():
     return jsonify({"message": "Logged out successfully"})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_mode = os.getenv('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
+    port = int(os.getenv('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
