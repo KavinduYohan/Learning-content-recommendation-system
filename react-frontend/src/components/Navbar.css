@@ -1,42 +1,203 @@
-/* Navbar.css */
-/* Navbar.css */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 10px 20px;
+/* Modern Glassmorphic Navbar */
+.navbar-custom {
   position: fixed;
   top: 0;
-  left: 0; 
+  left: 0;
   width: 100%;
-  z-index: 10;
-  box-sizing: border-box; 
-  margin: 0; 
-}
-.navbar-logo {
-  font-size: 24px;
-  color: white;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-.navbar-links {
-  list-style: none;
+.navbar-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 72px;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Brand styling */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.brand-icon-wrapper {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.brand-text-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.brand-highlight {
+  color: #34e89e;
+}
+
+.brand-subtitle {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Navigation Menu */
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 8px;
   margin: 0;
   padding: 0;
 }
 
-.navbar-links li {
-  margin: 0 15px;
-}
-
-.navbar-links a {
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 10px;
   text-decoration: none;
-  color: white;
-  font-size: 16px;
-  transition: color 0.3s ease;
+  color: #94a3b8;
+  font-size: 14.5px;
+  font-weight: 600;
+  transition: all 0.25s ease;
 }
 
-.navbar-links a:hover {
-  color: #34e89e;
+.nav-icon {
+  font-size: 15px;
+  transition: transform 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-link:hover .nav-icon {
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Actions & Profile */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.user-profile-widget {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 14px 6px 8px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.user-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.user-name-label {
+  color: #e2e8f0;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.logout-button:hover {
+  background: #ef4444;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.login-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.login-nav-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+@media (max-width: 900px) {
+  .brand-subtitle,
+  .user-name-label {
+    display: none;
+  }
+  .nav-link span {
+    display: none;
+  }
+  .nav-link {
+    padding: 9px 12px;
+  }
 }
