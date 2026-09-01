@@ -5,9 +5,7 @@ import {
   FaSyncAlt, 
   FaExternalLinkAlt, 
   FaGraduationCap, 
-  FaSparkles, 
-  FaInfoCircle,
-  FaCheckCircle
+  FaInfoCircle
 } from "react-icons/fa";
 import "./Recommendations.css";
 import Navbar from "./components/Navbar";

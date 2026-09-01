@@ -4,12 +4,9 @@ import {
   FaGraduationCap, 
   FaBookOpen, 
   FaYoutube, 
-  FaUserGraduate, 
   FaBrain, 
-  FaLightbulb, 
   FaChartLine, 
   FaArrowRight,
-  FaCheckCircle,
   FaUniversity,
   FaGlobe,
   FaPhoneAlt

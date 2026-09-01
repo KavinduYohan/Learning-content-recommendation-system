@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Select from "react-select";
 import {
-  FaUser,
   FaIdCard,
   FaGraduationCap,
   FaBookOpen,
