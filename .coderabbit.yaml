@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+tone_instructions: "Be constructive, concise, and prioritize actionable feedback regarding code quality, performance, and security."
+early_access: false
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    - "!**/*.npy"
+    - "!**/*.pkl"
+    - "!**/*.csv"
+    - "!package-lock.json"
+    - "!**/node_modules/**"
+    - "!**/build/**"
+    - "!flask-backend/flask_session/**"
+  path_instructions:
+    - path: "flask-backend/**"
+      instructions: "Ensure robust error handling, SQL/database safety, efficient ML artifact loading/matrix operations, and secure Flask API practices."
+    - path: "react-frontend/**"
+      instructions: "Ensure clean React component architecture, safe state management, accessibility, and modern ES6+ standards."
+
+chat:
+  auto_reply: true
