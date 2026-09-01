@@ -408,7 +408,7 @@ def logout():
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    """Health check endpoint to inspect server and database status."""
+    """Health check endpoint to inspect server connectivity and ML artifact status."""
     db_status = "unknown"
     db = None
     try:
