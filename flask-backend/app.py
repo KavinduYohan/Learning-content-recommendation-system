@@ -228,11 +228,20 @@ def preprocess_student_data(student_row):
     return tfidf_vectorizer.transform([student_preferences])
 
 def weighted_random_selection(indices, scores, n=5):
-    # Normalize scores to get probabilities
-    probabilities = scores[indices] / np.sum(scores[indices])
-    # Randomly select indices based on probabilities
-    selected_indices = np.random.choice(indices, size=n, replace=False, p=probabilities)
-    return selected_indices
+    """Safely select n items using weighted probability distribution or uniform fallback."""
+    if len(indices) == 0:
+        return np.array([])
+    
+    subset_scores = scores[indices]
+    score_sum = np.sum(subset_scores)
+    
+    if score_sum <= 0 or np.isnan(score_sum):
+        probabilities = np.ones(len(indices)) / len(indices)
+    else:
+        probabilities = subset_scores / score_sum
+        
+    sample_size = min(n, len(indices))
+    return np.random.choice(indices, size=sample_size, replace=False, p=probabilities)
 
 @app.route('/recommendations', methods=['POST'])
 @login_required
@@ -396,6 +405,38 @@ def submit_results():
 def logout():
     session.clear()
     return jsonify({"message": "Logged out successfully"})
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint to inspect server and database status."""
+    db_status = "unknown"
+    db = None
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("SELECT 1;")
+        cursor.fetchone()
+        db_status = "connected"
+    except Exception as err:
+        db_status = f"unhealthy: {str(err)}"
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
+        if db:
+            db.close()
+
+    return jsonify({
+        "status": "ok" if db_status == "connected" else "degraded",
+        "database": db_status,
+        "environment": os.getenv("FLASK_ENV", "development"),
+        "models_loaded": {
+            "course_matrix": bool(course_matrix is not None),
+            "video_matrix": bool(video_matrix is not None),
+            "tfidf_vectorizer": bool(tfidf_vectorizer is not None),
+            "courses_df": bool(courses_df is not None),
+            "videos_df": bool(videos_df is not None)
+        }
+    }), 200 if db_status == "connected" else 503
 
 if __name__ == '__main__':
     debug_mode = os.getenv('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
